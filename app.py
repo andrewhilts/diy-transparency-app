@@ -41,10 +41,10 @@ class TransparencyReportListAPI(Resource):
     	print reports_as_dicts
         return reports_as_dicts
     def put(self):
-		parser.add_argument('author_name', type=str, location='json', required=True)
-		parser.add_argument('report_period_start', type=str, location='json', required=True)
-		parser.add_argument('report_period_end', type=str, location='json', required=True)
-		parser.add_argument('publication_date', type=str, location='json', required=True)
+		parser.add_argument('author_name', type=str, location='json')
+		parser.add_argument('report_period_start', type=str, location='json')
+		parser.add_argument('report_period_end', type=str, location='json')
+		parser.add_argument('publication_date', type=str, location='json')
 		args = parser.parse_args()
 		print args
 		report = TransparencyReport(
@@ -68,10 +68,10 @@ class TransparencyReportAPI(Resource):
         return r
 
     def post(self, id):
-		parser.add_argument('author_name', type=str, location='json', required=True)
-		parser.add_argument('report_period_start', type=str, location='json', required=True)
-		parser.add_argument('report_period_end', type=str, location='json', required=True)
-		parser.add_argument('publication_date', type=str, location='json', required=True)
+		parser.add_argument('author_name', type=str, location='json')
+		parser.add_argument('report_period_start', type=str, location='json')
+		parser.add_argument('report_period_end', type=str, location='json')
+		parser.add_argument('publication_date', type=str, location='json')
 		args = parser.parse_args()
 		
 		print args
@@ -90,9 +90,59 @@ class TransparencyReportAPI(Resource):
         print db_session.commit()
         return ""
 
+class DataRetentionGuideAPI(Resource):
+	def get(self, transparency_report_id):
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		guide = report.data_retention_guide
+		if guide is not None:
+			g = guide.serialize()
+		else:
+			g = None
+		return g
+
+	def put(self, transparency_report_id):
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+
+		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
+		parser.add_argument('complete_status', type=bool, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		args = parser.parse_args()
+		print args
+
+		guide = DataRetentionGuide(
+			inclusion_status=args.inclusion_status,
+			complete_status=args.complete_status,
+			narrative=args.narrative
+		)
+		guide.transparency_report = report
+		db_session.add(guide)
+		db_session.commit()
+		g = guide.serialize()
+		return g
+	def post(self, transparency_report_id):
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+
+		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
+		parser.add_argument('complete_status', type=bool, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		args = parser.parse_args()
+
+		guide = report.data_retention_guide
+		guide.inclusion_status = args.inclusion_status
+		guide.complete_status = args.complete_status
+		guide.narrative = args.narrative
+		
+		db_session.add(guide)
+		db_session.commit()
+		g = guide.serialize()
+		return g
+	def delete(self, transparency_report_id):
+		pass
 
 api.add_resource(TransparencyReportListAPI, '/transparency-reports', endpoint = 'transparency-reports')
 api.add_resource(TransparencyReportAPI, '/transparency-reports/<int:id>', endpoint = 'transparency-report')
+
+api.add_resource(DataRetentionGuideAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide')
 
 if __name__ == "__main__":
     app.run(debug=True)

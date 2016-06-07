@@ -3,3 +3,4 @@ lib/*
 local/*
 venv/*
 *.pyc
+settings/*
