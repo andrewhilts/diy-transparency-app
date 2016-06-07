@@ -1,0 +1,4 @@
+psycopg2
+SQLAlchemy
+Flask-SQLAlchemy
+flask-restful
