@@ -139,10 +139,129 @@ class DataRetentionGuideAPI(Resource):
 	def delete(self, transparency_report_id):
 		pass
 
+class DataCategoryListAPI(Resource):
+	def get(self):
+		categories = db_session.query(DataCategory).all()
+		categories_as_dicts = []
+		for c in categories:
+			categories_as_dicts.append(c.serialize())
+		print categories_as_dicts
+		return categories_as_dicts
+
+	def put(self):
+		parser.add_argument('name', type=str, location='json')
+		parser.add_argument('description', type=str, location='json')
+		args = parser.parse_args()
+		print args
+		category = DataCategory(
+			name=args.name,
+			description=args.description
+		)
+		db_session.add(category)
+		db_session.commit()
+		c = category.serialize()
+		return c
+
+	def options(self):
+	 	return {}, 200
+
+class DataCategoryAPI(Resource):
+	def get(self, data_category_id):
+		category = db_session.query(DataCategory).get(data_category_id)
+		c = category.serialize()
+		return c
+	def post(self, data_category_id):
+		category = db_session.query(TransparencyReport).get(data_category_id)
+
+		parser.add_argument('name', type=bool, location='json', required=True)
+		parser.add_argument('description', type=bool, location='json', required=True)
+		args = parser.parse_args()
+
+		category.name = args.name
+		category.description = args.description
+		
+		db_session.add(category)
+		db_session.commit()
+		c = category.serialize()
+		return c
+	def delete(self, data_category_id):
+		category = db_session.query(DataCategory).get(data_category_id)
+		db_session.delete(category)
+		print db_session.commit()
+		return ""
+
+class DataItemListAPI(Resource):
+	def get(self, data_category_id):
+		category = db_session.query(DataCategory).get(data_category_id)
+		items = category.items
+		items_as_dicts = []
+		if items is not None:
+			for i in items:
+				items_as_dicts.append(i.serialize())
+		return items_as_dicts
+
+	def put(self, data_category_id):
+		category = db_session.query(DataCategory).get(data_category_id)
+
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('description', type=str, location='json', required=True)
+		args = parser.parse_args()
+		print args
+
+		item = DataItem(
+			name=args.name,
+			description=args.description,
+		)
+		category.items.append(item)
+		db_session.add(item)
+		db_session.commit()
+		item = item.serialize()
+		return item
+
+	def options(self, data_category_id):
+	 	return {}, 200
+
+class DataItemAPI(Resource):
+	def get(self, data_category_id, data_item_id):
+		item = db_session.query(DataItem).get(data_item_id)
+		if item is not None:
+			i = item.serialize()
+		else:
+			i = None
+		return i
+	def post(self, data_category_id, data_item_id):
+		parser.add_argument('name', type=str, location='json')
+		parser.add_argument('description', type=str, location='json')
+
+		args = parser.parse_args()
+		
+		print args
+
+		item = db_session.query(DataItem).get(data_item_id)
+		item.name = args.name
+		item.description = args.description
+
+		category = db_session.query(DataCategory).get(data_category_id)
+		category.items(append)
+		db_session.commit()
+		item = item.serialize()
+		return item
+
+	def delete(self, data_category_id, data_item_id):
+	    item = db_session.query(DataItem).get(data_item_id)
+	    db_session.delete(item)
+	    print db_session.commit()
+	    return ""
+
 api.add_resource(TransparencyReportListAPI, '/transparency-reports', endpoint = 'transparency-reports')
 api.add_resource(TransparencyReportAPI, '/transparency-reports/<int:id>', endpoint = 'transparency-report')
 
 api.add_resource(DataRetentionGuideAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide')
+
+api.add_resource(DataCategoryListAPI, '/data-categories')
+api.add_resource(DataCategoryAPI, '/data-categories/<int:data_category_id>')
+api.add_resource(DataItemListAPI, '/data-categories/<int:data_category_id>/data-items')
+api.add_resource(DataItemAPI, '/data-categories/<int:data_category_id>/data-items/<int:data_item_id>')
 
 if __name__ == "__main__":
     app.run(debug=True)
