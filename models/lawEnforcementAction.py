@@ -10,3 +10,11 @@ class LawEnforcementAction(Base):
   #inherited by report instances of action, can be overwritten
   narrative=Column(Text) 
   narrative_label=Column(String(255))
+
+  def serialize(self):
+  	return {
+  		"action_id": self.action_id,
+  		"name": self.name,
+  		"narrative": self.narrative,
+  		"narrative_label": self.narrative_label
+  	}

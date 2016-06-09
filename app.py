@@ -305,6 +305,228 @@ class DataItemAPI(Resource):
 	    print db_session.commit()
 	    return "", 204
 
+class LawEnforcementActionCategoryListAPI(Resource):
+	def get(self):
+		lea_categories = db_session.query(LawEnforcementActionCategory).all()
+		lea_categories_as_dicts = []
+		for c in lea_categories:
+			lea_categories_as_dicts.append(c.serialize())
+		print lea_categories_as_dicts
+		return lea_categories_as_dicts, 200
+
+	def put(self):
+		parser = reqparse.RequestParser()
+		parser.add_argument('name', type=str, location='json')
+		parser.add_argument('action_selection_type', type=int, location='json')
+		args = parser.parse_args()
+		print args
+		lea_category = LawEnforcementActionCategory(
+			name=args.name,
+			action_selection_type=args.action_selection_type
+		)
+		db_session.add(lea_category)
+		db_session.commit()
+		c = lea_category.serialize()
+		return c, 201
+
+	def options(self):
+	 	return {}, 200
+
+class LawEnforcementActionCategoryAPI(Resource):
+	def get(self, lea_category_id):
+		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
+		c = lea_category.serialize()
+		return c, 200
+
+	def post(self, lea_category_id):
+		parser = reqparse.RequestParser()
+		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
+
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('action_selection_type', type=int, location='json')
+
+		args = parser.parse_args()
+		print args
+
+		lea_category.name = args.name
+		lea_category.action_selection_type = args.action_selection_type
+		
+		db_session.add(lea_category)
+		db_session.commit()
+		c = lea_category.serialize()
+		return c, 201
+
+	def delete(self, lea_category_id):
+		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
+		db_session.delete(lea_category)
+		print db_session.commit()
+		return "", 204
+
+class LawEnforcementActionListAPI(Resource):
+	def get(self, lea_category_id):
+		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
+		actions = lea_category.actions
+		actions_as_dicts = []
+		if actions is not None:
+			for a in actions:
+				actions_as_dicts.append(a.serialize())
+		return actions_as_dicts
+
+	def put(self, lea_category_id):
+		parser = reqparse.RequestParser()
+		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
+
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		parser.add_argument('narrative_label', type=str, location='json')
+		args = parser.parse_args()
+		print args
+
+		action = LawEnforcementAction(
+			name=args.name,
+			narrative=args.narrative,
+			narrative_label=args.narrative_label,
+		)
+		lea_category.actions.append(action)
+		db_session.add(action)
+		db_session.commit()
+		action = action.serialize()
+		return action
+
+	def options(self, lea_category_id):
+	 	return {}, 200
+
+class LawEnforcementActionAPI(Resource):
+	def get(self, lea_category_id, lea_action_id):
+		action = db_session.query(LawEnforcementAction).get(lea_action_id)
+		if action is not None:
+			a = action.serialize()
+		else:
+			a = None
+		return a, 200
+
+	def post(self, lea_category_id, lea_action_id):
+		parser = reqparse.RequestParser()
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		parser.add_argument('narrative_label', type=str, location='json')
+		args = parser.parse_args()
+		print args
+
+		action = db_session.query(LawEnforcementAction).get(lea_action_id)
+		action.name = args.name
+		action.narrative = args.narrative
+		action.narrative_label = args.narrative_label
+
+		db_session.commit()
+		action = action.serialize()
+		return action, 201
+
+	def delete(self, lea_category_id, lea_action_id):
+	    action = db_session.query(LawEnforcementAction).get(lea_action_id)
+	    db_session.delete(action)
+	    print db_session.commit()
+	    return "", 204
+
+class LawEnforcementHandbookAPI(Resource):
+	def get(self, transparency_report_id):
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		handbook = report.law_enforcement_handbook
+		if handbook is not None:
+			h = handbook.serialize()
+		else:
+			h = None
+		return h, 200
+
+	def put(self, transparency_report_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+
+		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
+		parser.add_argument('complete_status', type=bool, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		args = parser.parse_args()
+		print args
+
+		handbook = LawEnforcementHandbook(
+			inclusion_status=args.inclusion_status,
+			complete_status=args.complete_status,
+			narrative=args.narrative
+		)
+		handbook.transparency_report = report
+		
+		#Add associative entities for the guide
+		categories = db_session.query(LawEnforcementActionCategory).all()
+		for category in categories:
+			handbook_category = LawEnforcementHandbookActionCategory()
+			handbook_category.inclusion_status = True
+			handbook_category.category = category
+
+			actions = category.actions
+			for action in actions:
+				handbook_action = LawEnforcementHandbookAction()
+				if category.action_selection_type == 1:
+					handbook_action.inclusion_status = False
+				else:
+					handbook_action.inclusion_status = True
+				handbook_action.action = action
+				handbook_category.handbook_actions.append(handbook_action)
+				handbook.actions.append(handbook_action)
+
+			handbook.categories.append(handbook_category)
+
+		db_session.add(handbook)
+
+		db_session.commit()
+		h = handbook.serialize()
+		return h, 201
+
+	def post(self, transparency_report_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+
+		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
+		parser.add_argument('complete_status', type=bool, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		parser.add_argument('lea_categories', type=str, location='json', required=True)
+		args = parser.parse_args()
+
+		json = request.get_json(silent=True)
+
+		lea_categories = json['lea_categories']
+
+		handbook = report.law_enforcement_handbook
+		handbook.inclusion_status = args.inclusion_status
+		handbook.complete_status = args.complete_status
+		handbook.narrative = args.narrative
+
+		handbook_categories = []
+		for category in lea_categories:
+			handbook_category = db_session.query(LawEnforcementHandbookActionCategory).get(category['handbook_category_id'])
+			handbook_category.inclusion_status = category['inclusion_status']
+			#db_session.add(handbook_category)
+
+			handbook_actions = []
+			category_actions = category['actions']
+			for action in category_actions:
+				try: 
+					action['handbook_action_id']
+					handbook_action = db_session.query(LawEnforcementHandbookAction).get(action['handbook_action_id'])
+					handbook_action.inclusion_status = action['inclusion_status']
+					handbook_action.narrative = action['narrative']
+					handbook_actions.append(handbook_action)
+				except TypeError:
+					print "hmmm"
+				#db_session.add(handbook_item)
+			handbook_category.handbook_actions = handbook_actions
+			handbook_categories.append(handbook_category)
+		handbook.categories = handbook_categories
+		
+		db_session.add(handbook)
+		db_session.commit()
+		h = handbook.serialize()
+		return h, 201
+
 api.add_resource(TransparencyReportListAPI, '/transparency-reports', endpoint = 'transparency-reports')
 api.add_resource(TransparencyReportAPI, '/transparency-reports/<int:id>', endpoint = 'transparency-report')
 
@@ -314,6 +536,13 @@ api.add_resource(DataCategoryListAPI, '/data-categories')
 api.add_resource(DataCategoryAPI, '/data-categories/<int:data_category_id>')
 api.add_resource(DataItemListAPI, '/data-categories/<int:data_category_id>/data-items')
 api.add_resource(DataItemAPI, '/data-categories/<int:data_category_id>/data-items/<int:data_item_id>')
+
+api.add_resource(LawEnforcementHandbookAPI, '/transparency-reports/<int:transparency_report_id>/law-enforcement-handbook')
+
+api.add_resource(LawEnforcementActionCategoryListAPI, '/lea-categories')
+api.add_resource(LawEnforcementActionCategoryAPI, '/lea-categories/<int:lea_category_id>')
+api.add_resource(LawEnforcementActionListAPI, '/lea-categories/<int:lea_category_id>/lea-actions')
+api.add_resource(LawEnforcementActionAPI, '/lea-categories/<int:lea_category_id>/lea-actions/<int:lea_action_id>')
 
 if __name__ == "__main__":
     app.run(debug=True)

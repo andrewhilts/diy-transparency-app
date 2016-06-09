@@ -15,3 +15,18 @@ class LawEnforcementHandbook(Base):
   actions=relationship('LawEnforcementHandbookAction')
   categories=relationship('LawEnforcementHandbookActionCategory')
   #whether or not to show the date updated in the report
+
+  def serialize(self):
+    return {
+      'handbook_id': self.handbook_id,
+      'transparency_report_id': self.transparency_report_id,
+      'inclusion_status': self.inclusion_status,
+      'complete_status': self.complete_status,
+      'narrative': self.narrative,
+      'categories': self.serializeCategories()
+  }
+  def serializeCategories(self):
+    categories = []
+    for category in self.categories:
+      categories.append(category.serialize())
+    return categories
