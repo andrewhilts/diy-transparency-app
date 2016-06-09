@@ -10,7 +10,7 @@ class DataRetentionGuide(Base):
   narrative=Column(Text)
   transparency_report_id=Column(Integer, ForeignKey('transparency_reports.report_id'))
   transparency_report=relationship('TransparencyReport', back_populates="data_retention_guide")
-  categories=relationship("DataRetentionGuideCategory")
+  categories=relationship("DataRetentionGuideCategory", order_by="DataRetentionGuideCategory.guide_category_id")
   items=relationship("DataRetentionGuideItem")
 
   def __init__(self, inclusion_status = None, complete_status = None, narrative = None):
@@ -27,5 +27,11 @@ class DataRetentionGuide(Base):
       'transparency_report_id': self.transparency_report_id,
       'inclusion_status': self.inclusion_status,
       'complete_status': self.complete_status,
-      'narrative': self.narrative
-    }
+      'narrative': self.narrative,
+      'data_categories': self.serializeCategories()
+  }
+  def serializeCategories(self):
+    categories = []
+    for guide_category in self.categories:
+      categories.append(guide_category.serialize())
+    return categories
