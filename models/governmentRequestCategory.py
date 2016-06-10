@@ -8,3 +8,10 @@ class GovernmentRequestCategory(Base):
   name=Column(String(length=255))
   description=Column(Text)
   types=relationship('GovernmentRequestType', back_populates="category")
+
+  def serialize(self):
+  	return {
+  		"category_id": self.category_id,
+  		"name": self.name,
+  		"description": self.description
+  	}

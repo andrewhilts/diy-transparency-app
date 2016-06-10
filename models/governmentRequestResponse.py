@@ -8,3 +8,10 @@ class GovernmentRequestResponse(Base):
   #g "total requests, contested, etc"
   name=Column(String(length=255))
   description=Column(Text)
+
+  def serialize(self):
+  	return {
+  		"response_id": self.response_id,
+  		"name": self.name,
+  		"description": self.description
+  	}

@@ -106,17 +106,7 @@ class DataRetentionGuideAPI(Resource):
 		parser = reqparse.RequestParser()
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
 
-		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
-		parser.add_argument('complete_status', type=bool, location='json', required=True)
-		parser.add_argument('narrative', type=str, location='json', required=True)
-		args = parser.parse_args()
-		print args
-
-		guide = DataRetentionGuide(
-			inclusion_status=args.inclusion_status,
-			complete_status=args.complete_status,
-			narrative=args.narrative
-		)
+		guide = DataRetentionGuide()
 		guide.transparency_report = report
 		
 		#Add associative entities for the guide
@@ -442,17 +432,7 @@ class LawEnforcementHandbookAPI(Resource):
 		parser = reqparse.RequestParser()
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
 
-		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
-		parser.add_argument('complete_status', type=bool, location='json', required=True)
-		parser.add_argument('narrative', type=str, location='json', required=True)
-		args = parser.parse_args()
-		print args
-
-		handbook = LawEnforcementHandbook(
-			inclusion_status=args.inclusion_status,
-			complete_status=args.complete_status,
-			narrative=args.narrative
-		)
+		handbook = LawEnforcementHandbook()
 		handbook.transparency_report = report
 		
 		#Add associative entities for the guide
@@ -527,6 +507,270 @@ class LawEnforcementHandbookAPI(Resource):
 		h = handbook.serialize()
 		return h, 201
 
+class GovRequestReportAPI(Resource):
+	def get(self, transparency_report_id):
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		req_report = report.government_requests_report
+		if req_report is not None:
+			rr = req_report.serialize()
+		else:
+			rr = None
+		return rr, 200
+
+	def put(self, transparency_report_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+
+		req_report = GovernmentRequestsReport()
+		req_report.transparency_report = report
+		
+		#Add associative entities for the request report
+		req_types = db_session.query(GovernmentRequestType).all()
+		for req_type in req_types:
+			req_type_disclosure = GovernmentRequestReportTypeDisclosure()
+			req_type_disclosure.request_type = req_type
+
+			req_responses = db_session.query(GovernmentRequestResponse).all()
+			for req_response in req_responses:
+				type_disclosure_response = TypeDisclosureResponse()
+				type_disclosure_response.response = req_response
+				type_disclosure_response.count = 0
+
+				req_type_disclosure.disclosure_responses.append(type_disclosure_response)
+
+			req_report.disclosures.append(req_type_disclosure)
+
+		db_session.add(req_report)
+
+		db_session.commit()
+		rr = req_report.serialize()
+		return rr, 201
+
+	def post(self, transparency_report_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		req_report = report.government_requests_report
+
+		parser.add_argument('inclusion_status', type=bool, location='json', required=True)
+		parser.add_argument('complete_status', type=bool, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json', required=True)
+		parser.add_argument('categorized_disclosures', type=str, location='json', required=True)
+		args = parser.parse_args()
+
+		json = request.get_json(silent=True)
+
+		categorized_disclosures = json['categorized_disclosures']
+		disclosures = []
+		for key, category in categorized_disclosures.items():
+			for disclosure in category['disclosures']:
+				disclosures.append(disclosure)
+
+		req_report.inclusion_status = args.inclusion_status
+		req_report.complete_status = args.complete_status
+		req_report.narrative = args.narrative
+
+		req_report_disclosures = []
+		for disclosure in disclosures:
+			req_report_disclosure = db_session.query(GovernmentRequestReportTypeDisclosure).get(disclosure['disclosure_id'])
+			#db_session.add(handbook_category)
+
+			req_report_disclosure_responses = []
+			disclosure_responses = disclosure['disclosure_responses']
+			for response in disclosure_responses:
+				try: 
+					response['type_disclosure_id']
+					req_report_disclosure_response = db_session.query(TypeDisclosureResponse).get(response['type_disclosure_id'])
+					req_report_disclosure_response.count = response['count']
+					req_report_disclosure_responses.append(req_report_disclosure_response)
+				except TypeError:
+					print "hmmm"
+				#db_session.add(handbook_item)
+			req_report_disclosure.disclosures = req_report_disclosure_responses
+			req_report_disclosures.append(req_report_disclosure)
+		print req_report_disclosures
+		req_report.disclosures = req_report_disclosures
+		
+		db_session.add(req_report)
+		db_session.commit()
+		rr = req_report.serialize()
+		return rr, 201
+
+class GovernmentRequestCategoryListAPI(Resource):
+	def get(self):
+		gov_request_categories = db_session.query(GovernmentRequestCategory).all()
+		gov_request_categories_as_dicts = []
+		for c in gov_request_categories:
+			gov_request_categories_as_dicts.append(c.serialize())
+		print gov_request_categories_as_dicts
+		return gov_request_categories_as_dicts, 200
+
+	def put(self):
+		parser = reqparse.RequestParser()
+		parser.add_argument('name', type=str, location='json')
+		parser.add_argument('description', type=str, location='json')
+		args = parser.parse_args()
+		print args
+		gov_request_category = GovernmentRequestCategory(
+			name=args.name,
+			description=args.description
+		)
+		db_session.add(gov_request_category)
+		db_session.commit()
+		c = gov_request_category.serialize()
+		return c, 201
+
+	def options(self):
+	 	return {}, 200
+
+class GovernmentRequestCategoryAPI(Resource):
+	def get(self, gov_request_category_id):
+		gov_request_category = db_session.query(GovernmentRequestCategory).get(gov_request_category_id)
+		c = gov_request_category.serialize()
+		return c, 200
+
+	def post(self, gov_request_category_id):
+		parser = reqparse.RequestParser()
+		gov_request_category = db_session.query(GovernmentRequestCategory).get(gov_request_category_id)
+
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('description', type=str, location='json')
+
+		args = parser.parse_args()
+		print args
+
+		gov_request_category.name = args.name
+		gov_request_category.description = args.description
+		
+		db_session.add(gov_request_category)
+		db_session.commit()
+		c = gov_request_category.serialize()
+		return c, 201
+
+	def delete(self, gov_request_category_id):
+		gov_request_category = db_session.query(GovernmentRequestCategory).get(gov_request_category_id)
+		db_session.delete(gov_request_category)
+		print db_session.commit()
+		return "", 204
+
+class GovernmentRequestTypeListAPI(Resource):
+	def get(self, gov_request_category_id):
+		gov_request_category = db_session.query(GovernmentRequestCategory).get(gov_request_category_id)
+		types = gov_request_category.types
+		types_as_dicts = []
+		if types is not None:
+			for t in types:
+				types_as_dicts.append(t.serialize())
+		return types_as_dicts
+
+	def put(self, gov_request_category_id):
+		parser = reqparse.RequestParser()
+		gov_request_category = db_session.query(GovernmentRequestCategory).get(gov_request_category_id)
+
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('description', type=str, location='json', required=True)
+		args = parser.parse_args()
+		print args
+
+		type = GovernmentRequestType(
+			name=args.name,
+			description=args.description
+		)
+		gov_request_category.types.append(type)
+		db_session.add(type)
+		db_session.commit()
+		type = type.serialize()
+		return type
+
+	def options(self, gov_request_category_id):
+	 	return {}, 200
+
+class GovernmentRequestTypeAPI(Resource):
+	def get(self, gov_request_category_id, gov_request_type_id):
+		type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
+		if type is not None:
+			t = type.serialize()
+		else:
+			t = None
+		return t, 200
+
+	def post(self, gov_request_category_id, gov_request_type_id):
+		parser = reqparse.RequestParser()
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('description', type=str, location='json', required=True)
+		args = parser.parse_args()
+		print args
+
+		type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
+		type.name = args.name
+		type.description = args.description
+
+		db_session.commit()
+		type = type.serialize()
+		return type, 201
+
+	def delete(self, gov_request_category_id, gov_request_type_id):
+	    type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
+	    db_session.delete(type)
+	    print db_session.commit()
+	    return "", 204
+
+class GovernmentRequestResponseListAPI(Resource):
+	def get(self):
+		gov_request_responses = db_session.query(GovernmentRequestResponse).all()
+		gov_request_responses_as_dicts = []
+		for c in gov_request_responses:
+			gov_request_responses_as_dicts.append(c.serialize())
+		print gov_request_responses_as_dicts
+		return gov_request_responses_as_dicts, 200
+
+	def put(self):
+		parser = reqparse.RequestParser()
+		parser.add_argument('name', type=str, location='json')
+		parser.add_argument('description', type=str, location='json')
+		args = parser.parse_args()
+		print args
+		gov_request_response = GovernmentRequestResponse(
+			name=args.name,
+			description=args.description
+		)
+		db_session.add(gov_request_response)
+		db_session.commit()
+		c = gov_request_response.serialize()
+		return c, 201
+
+	def options(self):
+	 	return {}, 200
+
+class GovernmentRequestResponseAPI(Resource):
+	def get(self, gov_request_response_id):
+		gov_request_response = db_session.query(GovernmentRequestResponse).get(gov_request_response_id)
+		c = gov_request_response.serialize()
+		return c, 200
+
+	def post(self, gov_request_response_id):
+		parser = reqparse.RequestParser()
+		gov_request_response = db_session.query(GovernmentRequestResponse).get(gov_request_response_id)
+
+		parser.add_argument('name', type=str, location='json', required=True)
+		parser.add_argument('description', type=str, location='json')
+
+		args = parser.parse_args()
+		print args
+
+		gov_request_response.name = args.name
+		gov_request_response.description = args.description
+		
+		db_session.add(gov_request_response)
+		db_session.commit()
+		c = gov_request_response.serialize()
+		return c, 201
+
+	def delete(self, gov_request_response_id):
+		gov_request_response = db_session.query(GovernmentRequestResponse).get(gov_request_response_id)
+		db_session.delete(gov_request_response)
+		print db_session.commit()
+		return "", 204
+
 api.add_resource(TransparencyReportListAPI, '/transparency-reports', endpoint = 'transparency-reports')
 api.add_resource(TransparencyReportAPI, '/transparency-reports/<int:id>', endpoint = 'transparency-report')
 
@@ -543,6 +787,15 @@ api.add_resource(LawEnforcementActionCategoryListAPI, '/lea-categories')
 api.add_resource(LawEnforcementActionCategoryAPI, '/lea-categories/<int:lea_category_id>')
 api.add_resource(LawEnforcementActionListAPI, '/lea-categories/<int:lea_category_id>/lea-actions')
 api.add_resource(LawEnforcementActionAPI, '/lea-categories/<int:lea_category_id>/lea-actions/<int:lea_action_id>')
+
+api.add_resource(GovRequestReportAPI, '/transparency-reports/<int:transparency_report_id>/gov-request-report')
+
+api.add_resource(GovernmentRequestCategoryListAPI, '/gov-request-categories')
+api.add_resource(GovernmentRequestCategoryAPI, '/gov-request-categories/<int:gov_request_category_id>')
+api.add_resource(GovernmentRequestTypeListAPI, '/gov-request-categories/<int:gov_request_category_id>/gov-request-types')
+api.add_resource(GovernmentRequestTypeAPI, '/gov-request-categories/<int:gov_request_category_id>/gov-request-types/<int:gov_request_type_id>')
+api.add_resource(GovernmentRequestResponseListAPI, '/gov-request-responses')
+api.add_resource(GovernmentRequestResponseAPI, '/gov-request-responses/<int:gov_request_response_id>')
 
 if __name__ == "__main__":
     app.run(debug=True)
