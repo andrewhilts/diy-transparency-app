@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, Boolean, String, Text, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from base import Base
+import csv, StringIO
 
 class GovernmentRequestsReport(Base):
   __tablename__ = 'government_requests_reports'
@@ -33,3 +34,34 @@ class GovernmentRequestsReport(Base):
 			categories[cat_key] = serialized_category
 		categories[cat_key]['disclosures'].append(disclosure.serialize())
 	return categories
+
+  def toCSV(self):
+    headerRow = ['Category', 'Sub Category']
+    rows = []
+    colTotals = ['TOTALS', 'N/A']
+    for index in range(len(self.disclosures)):
+      # Add category to first column
+      columns = [
+        self.disclosures[index].request_type.category.name,
+        self.disclosures[index].request_type.name
+      ]
+      for j in range(len(self.disclosures[index].disclosure_responses)):
+        #add header row
+        if index == 0:
+          headerRow.append(self.disclosures[index].disclosure_responses[j].response.name)
+          #Add empty slot
+          colTotals.append(0)
+        #done adding header row
+        columns.append(self.disclosures[index].disclosure_responses[j].count)
+        colTotals[j+2] += self.disclosures[index].disclosure_responses[j].count
+      rows.append(columns)
+
+    rows.insert(0, headerRow)
+    rows.append(colTotals)
+    
+    si = StringIO.StringIO()
+    cw = csv.writer(si)
+    cw.writerows(rows)
+    return si
+
+

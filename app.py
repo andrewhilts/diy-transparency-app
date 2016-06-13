@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from flask_restful import Api, Resource, reqparse
 import json
 import database
@@ -30,6 +30,19 @@ api = Api(app)
 @app.route("/")
 def hello():
     return "Hello World!"
+
+@app.route("/transparency-reports/<int:transparency_report_id>/gov-request-report/csv")
+def govRequestReportCSV(transparency_report_id):
+	report = db_session.query(TransparencyReport).get(transparency_report_id)
+	req_report = report.government_requests_report
+	if req_report is not None:
+		csvStrIO = req_report.toCSV()
+		output = make_response(csvStrIO.getvalue())
+		output.headers["Content-Disposition"] = "attachment; filename=government_requests_report.csv"
+		output.headers["Content-type"] = "text/csv"
+	else:
+		output = None
+	return output, 200
 
 class TransparencyReportListAPI(Resource):
     def get(self):
