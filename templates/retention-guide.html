@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Data Retention Guide</h1>
+<p>Data retention guides provides information about how long organizations retain information that is in their possession. Such guides can help companies rapidly identify to third-parties, including users and government agencies, whether they possess information of interest to those parties. Moreover, by possessing a data retention guide an organization can demonstrate its compliance with Canadian privacy law.</p>
+
+<h2>About this guide</h2>
+<p>
+	{{guide.narrative}}
+</p>
+
+<h2>Data Retained</h2>
+
+{% for category in guide.data_categories %}
+	{% if category.inclusion_status %}
+		<h3>{{category.name}}</h3>
+		<ul>
+		{% for item in category['items'] %}
+			{% if item.inclusion_status %}
+				<li>{{item.name}}</li>
+			{% endif %}
+		{% endfor %}
+		</ul>
+	{% endif %}
+{% endfor %}
+{% endblock %}

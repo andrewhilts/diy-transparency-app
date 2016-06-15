@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, render_template
 from flask_restful import Api, Resource, reqparse
 import json
 import database
@@ -44,9 +44,53 @@ def govRequestReportCSV(transparency_report_id):
 		output = None
 	return output, 200
 
+@app.route("/transparency-reports/<int:transparency_report_id>/retention_guide/html")
+def dataRetentionGuideHTML(transparency_report_id):
+	report = db_session.query(TransparencyReport).get(transparency_report_id)
+	guide = report.data_retention_guide
+	if guide is not None:
+		g = guide.serialize()
+		html = render_template('retention-guide.html', guide=g)
+		output = make_response(html)
+		output.headers["Content-Disposition"] = "attachment; filename=data-retention-guide.html"
+		output.headers["Content-type"] = "text/html"
+	else:
+		output = None
+	return output, 200
+
+@app.route("/transparency-reports/<int:transparency_report_id>/law-enforcement-handbook/html")
+def LEAHandbookHTML(transparency_report_id):
+	report = db_session.query(TransparencyReport).get(transparency_report_id)
+	handbook = report.law_enforcement_handbook
+	if handbook is not None:
+		h = handbook.serialize()
+		html = render_template('lea-handbook.html', handbook=h)
+		output = make_response(html)
+		output.headers["Content-Disposition"] = "attachment; filename=gov-request-handbook.html"
+		output.headers["Content-type"] = "text/html"
+	else:
+		output = None
+	return output, 200
+
+@app.route("/transparency-reports/<int:transparency_report_id>/gov-request-report/html")
+def GovRequestReportHTML(transparency_report_id):
+	report = db_session.query(TransparencyReport).get(transparency_report_id)
+	req_report = report.government_requests_report
+	if req_report is not None:
+		rr = req_report.serialize()
+		t = req_report.toTable()
+		r = report.serialize()
+		html = render_template('gov-requests-report.html', report=rr, treport=r, table=t)
+		output = make_response(html)
+		output.headers["Content-Disposition"] = "attachment; filename=gov-requests-report.html"
+		output.headers["Content-type"] = "text/html"
+	else:
+		output = None
+	return output, 200
+
 class TransparencyReportListAPI(Resource):
     def get(self):
-		reports = db_session.query(TransparencyReport).all()
+		reports = db_session.query(TransparencyReport).order_by("report_id desc").all()
 		reports_as_dicts = []
 		for r in reports:
 			reports_as_dicts.append(r.serialize())
@@ -123,16 +167,16 @@ class DataRetentionGuideAPI(Resource):
 		guide.transparency_report = report
 		
 		#Add associative entities for the guide
-		categories = db_session.query(DataCategory).all()
+		categories = db_session.query(DataCategory).order_by("category_id desc").all()
 		for category in categories:
 			guide_category = DataRetentionGuideCategory()
-			guide_category.inclusion_status = True
+			guide_category.inclusion_status = False
 			guide_category.category = category
 
 			items = category.items
 			for item in items:
 				guide_item = DataRetentionGuideItem()
-				guide_item.inclusion_status = True
+				guide_item.inclusion_status = False
 				guide_item.item = item
 				guide_category.guide_items.append(guide_item)
 				guide.items.append(guide_item)
@@ -190,7 +234,7 @@ class DataRetentionGuideAPI(Resource):
 
 class DataCategoryListAPI(Resource):
 	def get(self):
-		categories = db_session.query(DataCategory).all()
+		categories = db_session.query(DataCategory).order_by("category_id desc").all()
 		categories_as_dicts = []
 		for c in categories:
 			categories_as_dicts.append(c.serialize())
@@ -310,7 +354,7 @@ class DataItemAPI(Resource):
 
 class LawEnforcementActionCategoryListAPI(Resource):
 	def get(self):
-		lea_categories = db_session.query(LawEnforcementActionCategory).all()
+		lea_categories = db_session.query(LawEnforcementActionCategory).order_by("category_id desc").all()
 		lea_categories_as_dicts = []
 		for c in lea_categories:
 			lea_categories_as_dicts.append(c.serialize())
@@ -449,19 +493,19 @@ class LawEnforcementHandbookAPI(Resource):
 		handbook.transparency_report = report
 		
 		#Add associative entities for the guide
-		categories = db_session.query(LawEnforcementActionCategory).all()
+		categories = db_session.query(LawEnforcementActionCategory).order_by("category_id desc").all()
 		for category in categories:
 			handbook_category = LawEnforcementHandbookActionCategory()
-			handbook_category.inclusion_status = True
+			handbook_category.inclusion_status = False
 			handbook_category.category = category
 
 			actions = category.actions
 			for action in actions:
 				handbook_action = LawEnforcementHandbookAction()
-				if category.action_selection_type == 1:
-					handbook_action.inclusion_status = False
-				else:
+				if category.action_selection_type == 3:
 					handbook_action.inclusion_status = True
+				else:
+					handbook_action.inclusion_status = False
 				handbook_action.action = action
 				handbook_category.handbook_actions.append(handbook_action)
 				handbook.actions.append(handbook_action)
@@ -538,12 +582,12 @@ class GovRequestReportAPI(Resource):
 		req_report.transparency_report = report
 		
 		#Add associative entities for the request report
-		req_types = db_session.query(GovernmentRequestType).all()
+		req_types = db_session.query(GovernmentRequestType).order_by("category_id desc").all()
 		for req_type in req_types:
 			req_type_disclosure = GovernmentRequestReportTypeDisclosure()
 			req_type_disclosure.request_type = req_type
 
-			req_responses = db_session.query(GovernmentRequestResponse).all()
+			req_responses = db_session.query(GovernmentRequestResponse).order_by("response_id desc").all()
 			for req_response in req_responses:
 				type_disclosure_response = TypeDisclosureResponse()
 				type_disclosure_response.response = req_response
@@ -610,7 +654,7 @@ class GovRequestReportAPI(Resource):
 
 class GovernmentRequestCategoryListAPI(Resource):
 	def get(self):
-		gov_request_categories = db_session.query(GovernmentRequestCategory).all()
+		gov_request_categories = db_session.query(GovernmentRequestCategory).order_by("category_id desc").all()
 		gov_request_categories_as_dicts = []
 		for c in gov_request_categories:
 			gov_request_categories_as_dicts.append(c.serialize())
@@ -729,7 +773,7 @@ class GovernmentRequestTypeAPI(Resource):
 
 class GovernmentRequestResponseListAPI(Resource):
 	def get(self):
-		gov_request_responses = db_session.query(GovernmentRequestResponse).all()
+		gov_request_responses = db_session.query(GovernmentRequestResponse).order_by("response_id desc").all()
 		gov_request_responses_as_dicts = []
 		for c in gov_request_responses:
 			gov_request_responses_as_dicts.append(c.serialize())

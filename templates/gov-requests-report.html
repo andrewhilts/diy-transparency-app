@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Government Requests Report</h1>
+<p>Government requests reports document the regularity at which organizations receive, and how they respond to, government agencies' requests for information. They are often referred to as 'transparency reports' by industry groups and members of civil society. These reports demonstrate that an organization is committed to providing data when lawfully required to do so and, in requiring such, operates as a careful steward of its users' or subscribers' information. Government requests reports also support a broader social purpose of showcasing to subscribers, to industry colleagues, and to citizens more broadly how often government agencies are using their lawful powers to compel information from organizations.</p>
+
+<h2>About this report</h2>
+<p>
+	{{report.narrative}}
+</p>
+
+<h2>Requests from government: {{treport.report_period_start}} to {{treport.report_period_end}}</h2>
+
+<table>
+{% for row in table %}
+	<tr>
+		{% for column in row %}
+		<td>{{column}}</td>
+		{% endfor %}
+	</tr>
+{% endfor %}
+</table>
+{% endblock %}

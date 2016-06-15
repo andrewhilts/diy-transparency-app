@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Government Request Handbook</h1>
+<p>A government request handbook explains how an organization receives, processes, and discloses information pertaining to government agencies' requests for information under the organization's control. Government request guidelines provide sufficient information that government agencies can clarify what kinds of requests a company is willing to receive, and the preferred ways for government agencies to serve such requests on the organization. These guidelines can also, as part of a narrative, explain the kinds of information that are/are not available. These kinds of explanations can be facilitated by organizations also issuing a data retention guide so that government agencies do not spend time requesting access to information that the organization does not, or no longer, retains.</p>
+
+<h2>About this handbook</h2>
+<p>
+	{{handbook.narrative}}
+</p>
+
+<h2>How we interact with government requests</h2>
+
+{% for category in handbook.categories %}
+	{% if category.inclusion_status %}
+		<h3>{{category.name}}</h3>
+		<ul>
+		{% for action in category['actions'] %}
+			{% if action.inclusion_status %}
+				<li>
+					{% if action.name %}
+						{{action.name}}
+					{% endif %}
+					{% if action.narrative %}
+						<br><small>{{action.narrative}}</small>
+					{% endif %}
+				</li>
+			{% endif %}
+		{% endfor %}
+		</ul>
+	{% endif %}
+{% endfor %}
+{% endblock %}

@@ -35,12 +35,12 @@ class GovernmentRequestsReport(Base):
 		categories[cat_key]['disclosures'].append(disclosure.serialize())
 	return categories
 
-  def toCSV(self):
+  def toTable(self):
     headerRow = ['Category', 'Sub Category']
     rows = []
     colTotals = ['TOTALS', 'N/A']
     for index in range(len(self.disclosures)):
-      # Add category to first column
+      # Add categories to first and second columns
       columns = [
         self.disclosures[index].request_type.category.name,
         self.disclosures[index].request_type.name
@@ -49,19 +49,28 @@ class GovernmentRequestsReport(Base):
         #add header row
         if index == 0:
           headerRow.append(self.disclosures[index].disclosure_responses[j].response.name)
-          #Add empty slot
+          #Add empty slot to start totals list items
           colTotals.append(0)
         #done adding header row
+
         columns.append(self.disclosures[index].disclosure_responses[j].count)
+
+        #Add to totals: Account for the two category columns by adding 2 to the index
         colTotals[j+2] += self.disclosures[index].disclosure_responses[j].count
       rows.append(columns)
 
     rows.insert(0, headerRow)
     rows.append(colTotals)
+    return rows
+
+  def toCSV(self):
+    rows = self.toTable()
     
     si = StringIO.StringIO()
     cw = csv.writer(si)
     cw.writerows(rows)
     return si
+
+
 
 
