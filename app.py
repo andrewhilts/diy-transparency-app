@@ -232,6 +232,31 @@ class DataRetentionGuideAPI(Resource):
 		g = guide.serialize()
 		return g, 201
 
+class DataRetentionGuideItemAPI(Resource):
+	def put(self, transparency_report_id, guide_category_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		guide = report.data_retention_guide
+		guide_categories = db_session.query(DataRetentionGuideCategory).all()
+		guide_category = db_session.query(DataRetentionGuideCategory).get(guide_category_id)
+
+		json = request.get_json(silent=True)
+		print json
+		data_item = db_session.query(DataItem).get(json['item_id'])
+		guide_item = DataRetentionGuideItem()
+		guide_item.inclusion_status = True
+		guide_item.item = data_item
+
+		guide.items.append(guide_item)
+		guide_category.guide_items.append(guide_item)
+		# guide_categories.append(guide_category)
+		# guide.categories = guide_categories
+
+		db_session.add(guide)
+		db_session.commit()
+		gi = guide_item.serialize()
+		return gi, 201
+
 class DataCategoryListAPI(Resource):
 	def get(self):
 		categories = db_session.query(DataCategory).order_by("category_id desc").all()
@@ -832,6 +857,7 @@ api.add_resource(TransparencyReportListAPI, '/transparency-reports', endpoint = 
 api.add_resource(TransparencyReportAPI, '/transparency-reports/<int:id>', endpoint = 'transparency-report')
 
 api.add_resource(DataRetentionGuideAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide')
+api.add_resource(DataRetentionGuideItemAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide/data-categories/<int:guide_category_id>/data-items')
 
 api.add_resource(DataCategoryListAPI, '/data-categories')
 api.add_resource(DataCategoryAPI, '/data-categories/<int:data_category_id>')

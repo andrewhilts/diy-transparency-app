@@ -21,6 +21,7 @@ class DataRetentionGuideItem(Base):
   		"guide_item_id": self.guide_item_id,
   		"name": parent['name'],
   		"description": parent['description'],
+      "guide_category_id": self.guide_category_id,
   		"narrative": self.narrative,
 		"inclusion_status": self.inclusion_status,
 		"retention_status": self.retention_status

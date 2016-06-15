@@ -18,6 +18,7 @@ class DataRetentionGuideCategory(Base):
   	parent = self.category.serialize()
   	guide_category = {
   		"guide_category_id": self.guide_category_id,
+      "parent_category_id": parent['category_id'],
   		"name": parent['name'],
   		"description": parent['description'],
   		"inclusion_status": self.inclusion_status,
