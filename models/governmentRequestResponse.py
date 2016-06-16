@@ -8,6 +8,7 @@ class GovernmentRequestResponse(Base):
   #g "total requests, contested, etc"
   name=Column(String(length=255))
   description=Column(Text)
+  disclosure_responses=relationship('TypeDisclosureResponse', cascade="delete")
 
   def serialize(self):
   	return {

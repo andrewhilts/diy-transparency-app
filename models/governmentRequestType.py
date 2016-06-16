@@ -9,6 +9,7 @@ class GovernmentRequestType(Base):
   name=Column(String(length=255))
   description=Column(Text)
   category=relationship('GovernmentRequestCategory', back_populates="types")
+  type_disclosure=relationship('GovernmentRequestReportTypeDisclosure', cascade='delete')
 
   def serialize(self):
   	category = self.category.serialize()

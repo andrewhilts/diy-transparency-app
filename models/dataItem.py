@@ -9,6 +9,8 @@ class DataItem(Base):
   category_id=Column(Integer, ForeignKey('data_categories.category_id'))
   #inherited by report instances of type, can be overwritten
   description=Column(Text)
+  category=relationship('DataCategory', single_parent=True)
+  guide_items=relationship("DataRetentionGuideItem", cascade="delete")
 
   def __init__(self, name = None, description = None):
 	if 'name' in locals():

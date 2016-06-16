@@ -10,8 +10,8 @@ class DataRetentionGuide(Base):
   narrative=Column(Text)
   transparency_report_id=Column(Integer, ForeignKey('transparency_reports.report_id'))
   transparency_report=relationship('TransparencyReport', back_populates="data_retention_guide")
-  categories=relationship("DataRetentionGuideCategory", order_by="DataRetentionGuideCategory.guide_category_id")
-  items=relationship("DataRetentionGuideItem")
+  categories=relationship("DataRetentionGuideCategory", order_by="DataRetentionGuideCategory.guide_category_id", cascade="delete, save-update")
+  items=relationship("DataRetentionGuideItem", cascade="delete, save-update")
 
   def __init__(self, inclusion_status = None, complete_status = None, narrative = None):
     if 'inclusion_status' in locals():

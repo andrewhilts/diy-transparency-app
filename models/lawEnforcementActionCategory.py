@@ -8,7 +8,8 @@ class LawEnforcementActionCategory(Base):
   name=Column(String(255))
   #denotes whether or not actions can be multiply selected, single selected, or are Text, if Text value, just show narrative box automatically...
   action_selection_type=Column(Integer)
-  actions=relationship("LawEnforcementAction", order_by="LawEnforcementAction.action_id")
+  actions=relationship("LawEnforcementAction", order_by="LawEnforcementAction.action_id", cascade="delete")
+  handbook_categories=relationship("LawEnforcementHandbookActionCategory", cascade="delete")
 
   def serialize(self):
   	return {

@@ -7,7 +7,7 @@ class GovernmentRequestCategory(Base):
   category_id=Column(Integer, primary_key=True)
   name=Column(String(length=255))
   description=Column(Text)
-  types=relationship('GovernmentRequestType', back_populates="category")
+  types=relationship('GovernmentRequestType', back_populates="category", cascade='delete')
 
   def serialize(self):
   	return {

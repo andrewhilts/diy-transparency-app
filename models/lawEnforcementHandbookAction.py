@@ -10,7 +10,7 @@ class LawEnforcementHandbookAction(Base):
 	handbook_category_id=Column(Integer, ForeignKey('law_enfocement_handbook_action_categories.handbook_category_id'))
 	narrative=Column(Text)
 	inclusion_status=Column(Boolean)
-	action=relationship('LawEnforcementAction', cascade='delete, delete-orphan', single_parent=True)
+	action=relationship('LawEnforcementAction', single_parent=True)
 
 	def serialize(self):
 		parent = self.action.serialize()

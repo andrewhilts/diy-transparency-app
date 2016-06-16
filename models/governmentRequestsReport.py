@@ -11,7 +11,7 @@ class GovernmentRequestsReport(Base):
   complete_status=Column(Boolean)
   narrative=Column(Text)
   transparency_report=relationship('TransparencyReport', back_populates="government_requests_report")
-  disclosures=relationship('GovernmentRequestReportTypeDisclosure', back_populates="report")
+  disclosures=relationship('GovernmentRequestReportTypeDisclosure', back_populates="report", cascade="delete, save-update")
 
   def serialize(self):
     return {

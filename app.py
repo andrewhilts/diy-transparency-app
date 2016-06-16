@@ -257,6 +257,33 @@ class DataRetentionGuideItemAPI(Resource):
 		gi = guide_item.serialize()
 		return gi, 201
 
+	def options(self, transparency_report_id, guide_category_id):
+		return {}, 200
+
+class DataRetentionGuideCategoryAPI(Resource):
+	def put(self, transparency_report_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		guide = report.data_retention_guide
+
+		json = request.get_json(silent=True)
+		print json
+		data_category = db_session.query(DataCategory).get(json['category_id'])
+		guide_category = DataRetentionGuideCategory()
+		guide_category.inclusion_status = True
+		guide_category.category = data_category
+
+		guide.categories.append(guide_category)
+
+
+		db_session.add(guide)
+		db_session.commit()
+		gc = guide_category.serialize()
+		return gc, 201
+
+	def options(self, transparency_report_id):
+		return {}, 200
+
 class DataCategoryListAPI(Resource):
 	def get(self):
 		categories = db_session.query(DataCategory).order_by("category_id desc").all()
@@ -500,6 +527,57 @@ class LawEnforcementActionAPI(Resource):
 	    print db_session.commit()
 	    return "", 204
 
+class LawEnforcementHandbookActionAPI(Resource):
+	def put(self, transparency_report_id, handbook_category_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		handbook = report.law_enforcement_handbook
+
+		handbook_category = db_session.query(LawEnforcementHandbookActionCategory).get(handbook_category_id)
+
+		json = request.get_json(silent=True)
+		print json
+		action = db_session.query(LawEnforcementAction).get(json['action_id'])
+		handbook_action = LawEnforcementHandbookAction()
+		handbook_action.inclusion_status = True
+		handbook_action.action = action
+		handbook_action.narrative = action.narrative
+
+		handbook.actions.append(handbook_action)
+		handbook_category.handbook_actions.append(handbook_action)
+
+		db_session.add(handbook)
+		db_session.commit()
+		action = handbook_action.serialize()
+		return action, 201
+
+	def options(self, transparency_report_id, handbook_category_id):
+		return {}, 200
+
+class LawEnforcementHandbookActionCategoryAPI(Resource):
+	def put(self, transparency_report_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+		handbook = report.law_enforcement_handbook
+
+		json = request.get_json(silent=True)
+		print json
+		action_category = db_session.query(LawEnforcementActionCategory).get(json['category_id'])
+		handbook_category = LawEnforcementHandbookActionCategory()
+		handbook_category.inclusion_status = True
+		handbook_category.category = action_category
+
+		handbook.categories.append(handbook_category)
+
+
+		db_session.add(handbook)
+		db_session.commit()
+		hc = handbook_category.serialize()
+		return hc, 201
+
+	def options(self, transparency_report_id):
+		return {}, 200
+
 class LawEnforcementHandbookAPI(Resource):
 	def get(self, transparency_report_id):
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
@@ -676,6 +754,41 @@ class GovRequestReportAPI(Resource):
 		db_session.commit()
 		rr = req_report.serialize()
 		return rr, 201
+
+class GovernmentRequestReportTypeAPI(Resource):
+	def put(self, transparency_report_id, gov_request_category_id):
+		parser = reqparse.RequestParser()
+		report = db_session.query(TransparencyReport).get(transparency_report_id)
+
+		req_report = report.government_requests_report
+		
+		#Add associative entities for the request report
+		json = request.get_json(silent=True)
+		print json
+		# data_category = db_session.query(DataRetentionGuideCategory).get(gov_request_category_id)
+
+		req_type = db_session.query(GovernmentRequestType).get(json['type_id'])
+		req_type_disclosure = GovernmentRequestReportTypeDisclosure()
+		req_type_disclosure.request_type = req_type
+
+		req_responses = db_session.query(GovernmentRequestResponse).order_by("response_id desc").all()
+		for req_response in req_responses:
+			type_disclosure_response = TypeDisclosureResponse()
+			type_disclosure_response.response = req_response
+			type_disclosure_response.count = 0
+
+			req_type_disclosure.disclosure_responses.append(type_disclosure_response)
+
+		req_report.disclosures.append(req_type_disclosure)
+
+		db_session.add(req_report)
+
+		db_session.commit()
+		rr = req_type_disclosure.serialize()
+		return rr, 201
+
+	def options(self, transparency_report_id, gov_request_category_id):
+		return {}, 200
 
 class GovernmentRequestCategoryListAPI(Resource):
 	def get(self):
@@ -858,6 +971,7 @@ api.add_resource(TransparencyReportAPI, '/transparency-reports/<int:id>', endpoi
 
 api.add_resource(DataRetentionGuideAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide')
 api.add_resource(DataRetentionGuideItemAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide/data-categories/<int:guide_category_id>/data-items')
+api.add_resource(DataRetentionGuideCategoryAPI, '/transparency-reports/<int:transparency_report_id>/retention_guide/data-categories')
 
 api.add_resource(DataCategoryListAPI, '/data-categories')
 api.add_resource(DataCategoryAPI, '/data-categories/<int:data_category_id>')
@@ -865,6 +979,8 @@ api.add_resource(DataItemListAPI, '/data-categories/<int:data_category_id>/data-
 api.add_resource(DataItemAPI, '/data-categories/<int:data_category_id>/data-items/<int:data_item_id>')
 
 api.add_resource(LawEnforcementHandbookAPI, '/transparency-reports/<int:transparency_report_id>/law-enforcement-handbook')
+api.add_resource(LawEnforcementHandbookActionAPI, '/transparency-reports/<int:transparency_report_id>/law-enforcement-handbook/lea-categories/<int:handbook_category_id>/lea-actions')
+api.add_resource(LawEnforcementHandbookActionCategoryAPI, '/transparency-reports/<int:transparency_report_id>/law-enforcement-handbook/lea-categories')
 
 api.add_resource(LawEnforcementActionCategoryListAPI, '/lea-categories')
 api.add_resource(LawEnforcementActionCategoryAPI, '/lea-categories/<int:lea_category_id>')
@@ -872,6 +988,7 @@ api.add_resource(LawEnforcementActionListAPI, '/lea-categories/<int:lea_category
 api.add_resource(LawEnforcementActionAPI, '/lea-categories/<int:lea_category_id>/lea-actions/<int:lea_action_id>')
 
 api.add_resource(GovRequestReportAPI, '/transparency-reports/<int:transparency_report_id>/gov-request-report')
+api.add_resource(GovernmentRequestReportTypeAPI, '/transparency-reports/<int:transparency_report_id>/gov-request-report/gov-request-categories/<int:gov_request_category_id>/gov-request-types')
 
 api.add_resource(GovernmentRequestCategoryListAPI, '/gov-request-categories')
 api.add_resource(GovernmentRequestCategoryAPI, '/gov-request-categories/<int:gov_request_category_id>')

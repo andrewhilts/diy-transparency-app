@@ -8,13 +8,14 @@ class LawEnforcementHandbookActionCategory(Base):
   handbook_id=Column(Integer, ForeignKey('law_enforcement_handbooks.handbook_id'))
   action_category_id=Column(Integer, ForeignKey('law_enforcement_action_categories.category_id'))
   inclusion_status=Column(Boolean)
-  category=relationship('LawEnforcementActionCategory', cascade='delete, delete-orphan', single_parent=True)
-  handbook_actions=relationship('LawEnforcementHandbookAction', order_by="LawEnforcementHandbookAction.handbook_action_id")
+  category=relationship('LawEnforcementActionCategory', single_parent=True)
+  handbook_actions=relationship('LawEnforcementHandbookAction', order_by="LawEnforcementHandbookAction.handbook_action_id", cascade="delete")
 
   def serialize(self):
   	parent = self.category.serialize()
   	handbook_category = {
-  		"handbook_category_id": self.handbook_category_id,
+      "handbook_category_id": self.handbook_category_id,
+  		"parent_category_id": parent['category_id'],
   		"name": parent['name'],
   		"action_selection_type": parent['action_selection_type'],
   		"inclusion_status": self.inclusion_status,

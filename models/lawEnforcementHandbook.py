@@ -12,8 +12,8 @@ class LawEnforcementHandbook(Base):
   date_updated_inclusion_status=Column(Boolean) 
   transparency_report_id=Column(Integer, ForeignKey('transparency_reports.report_id'))
   transparency_report=relationship('TransparencyReport', back_populates="law_enforcement_handbook")
-  actions=relationship('LawEnforcementHandbookAction')
-  categories=relationship('LawEnforcementHandbookActionCategory')
+  actions=relationship('LawEnforcementHandbookAction', cascade="delete, save-update")
+  categories=relationship('LawEnforcementHandbookActionCategory', cascade="delete, save-update")
   #whether or not to show the date updated in the report
 
   def serialize(self):

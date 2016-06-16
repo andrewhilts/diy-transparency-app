@@ -10,6 +10,7 @@ class LawEnforcementAction(Base):
   #inherited by report instances of action, can be overwritten
   narrative=Column(Text) 
   narrative_label=Column(String(255))
+  handbook_actions=relationship("LawEnforcementHandbookAction", cascade="delete")
 
   def serialize(self):
   	return {

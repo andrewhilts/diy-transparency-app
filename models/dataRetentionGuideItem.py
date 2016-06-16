@@ -13,7 +13,8 @@ class DataRetentionGuideItem(Base):
   inclusion_status=Column(Boolean) 
   #denotes explicitly whether data is retained or not retained
   retention_status=Column(Boolean) 
-  item=relationship('DataItem', cascade='delete, delete-orphan', single_parent=True)
+  item=relationship('DataItem', single_parent=True)
+  guide_category=relationship('DataRetentionGuideCategory', cascade='delete, delete-orphan', single_parent=True)
 
   def serialize(self):
   	parent = self.item.serialize()

@@ -13,9 +13,9 @@ class TransparencyReport(Base):
   report_period_start=Column(Date)
   report_period_end=Column(Date)
   author_name=Column(String(length=255))
-  government_requests_report=relationship('GovernmentRequestsReport', uselist=False, back_populates="transparency_report")
-  data_retention_guide=relationship('DataRetentionGuide', uselist=False, back_populates="transparency_report")
-  law_enforcement_handbook=relationship('LawEnforcementHandbook', uselist=False, back_populates="transparency_report")
+  government_requests_report=relationship('GovernmentRequestsReport', uselist=False, back_populates="transparency_report", cascade="all, delete-orphan")
+  data_retention_guide=relationship('DataRetentionGuide', uselist=False, back_populates="transparency_report", cascade="all, delete-orphan")
+  law_enforcement_handbook=relationship('LawEnforcementHandbook', uselist=False, back_populates="transparency_report", cascade="all, delete-orphan")
 
   def __init__(self, report_id=None, author_name=None, report_period_start=None, report_period_end=None, publication_date=None):
     if 'report_id' in locals():
