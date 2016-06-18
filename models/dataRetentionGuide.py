@@ -7,6 +7,7 @@ class DataRetentionGuide(Base):
   guide_id=Column(Integer, primary_key=True)
   inclusion_status=Column(Boolean)
   complete_status=Column(Boolean)
+  date_updated=Column(Date)
   narrative=Column(Text)
   transparency_report_id=Column(Integer, ForeignKey('transparency_reports.report_id'))
   transparency_report=relationship('TransparencyReport', back_populates="data_retention_guide")
@@ -28,7 +29,8 @@ class DataRetentionGuide(Base):
       'inclusion_status': self.inclusion_status,
       'complete_status': self.complete_status,
       'narrative': self.narrative,
-      'data_categories': self.serializeCategories()
+      'data_categories': self.serializeCategories(),
+      'date_updated': self.date_updated.strftime('%Y-%m-%d') if self.date_updated else None
   }
   def serializeCategories(self):
     categories = []

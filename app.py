@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, make_response, render_template
 from flask_restful import Api, Resource, reqparse
 import json
+import datetime
 import database
 from models.base import Base as Base
 from models.dataCategory import DataCategory
@@ -111,6 +112,7 @@ class TransparencyReportListAPI(Resource):
 			report_period_end=args.report_period_end,
 			publication_date=args.publication_date
 		)
+		report.date_updated = datetime.date.today()
 		db_session.add(report)
 		db_session.commit()
 		r = report.serialize()
@@ -132,13 +134,31 @@ class TransparencyReportAPI(Resource):
 		parser.add_argument('report_period_end', type=str, location='json')
 		parser.add_argument('publication_date', type=str, location='json')
 		args = parser.parse_args()
+
+		json = request.get_json(silent=True)
 		
-		print args
 		report = db_session.query(TransparencyReport).get(id)
 		report.author_name = args.author_name
 		report.report_period_start = args.report_period_start
 		report.report_period_end = args.report_period_end
 		report.publication_date = args.publication_date
+
+		if report.government_requests_report is not None:
+			if 'government_requests_report_inclusion_status' in json:
+				report.government_requests_report.inclusion_status = json['government_requests_report_inclusion_status']
+
+		if report.data_retention_guide is not None:
+			print "hi"
+			if 'retention_guide_inclusion_status' in json:
+				report.data_retention_guide.inclusion_status = json['retention_guide_inclusion_status']
+
+		if report.law_enforcement_handbook is not None:
+			if 'law_enforcement_handbook_inclusion_status' in json:
+				report.law_enforcement_handbook.inclusion_status = json['law_enforcement_handbook_inclusion_status']
+
+		report.complete_status = report.determineCompleteStatus()
+		report.date_updated = datetime.date.today()
+		db_session.add(report)
 		db_session.commit()
 		r = report.serialize()
 		return r, 201
@@ -165,6 +185,9 @@ class DataRetentionGuideAPI(Resource):
 
 		guide = DataRetentionGuide()
 		guide.transparency_report = report
+
+		report.date_updated = datetime.date.today()
+		guide.date_updated = datetime.date.today()
 		
 		#Add associative entities for the guide
 		categories = db_session.query(DataCategory).order_by("category_id desc").all()
@@ -184,6 +207,7 @@ class DataRetentionGuideAPI(Resource):
 			guide.categories.append(guide_category)
 
 		db_session.add(guide)
+		db_session.add(report)
 
 		db_session.commit()
 		g = guide.serialize()
@@ -208,6 +232,11 @@ class DataRetentionGuideAPI(Resource):
 		guide.complete_status = args.complete_status
 		guide.narrative = args.narrative
 
+		report.complete_status = report.determineCompleteStatus()
+
+		report.date_updated = datetime.date.today()
+		guide.date_updated = datetime.date.today()
+
 		guide_categories = []
 		for category in categories:
 			guide_category = db_session.query(DataRetentionGuideCategory).get(category['guide_category_id'])
@@ -228,6 +257,7 @@ class DataRetentionGuideAPI(Resource):
 		guide.categories = guide_categories
 		
 		db_session.add(guide)
+		db_session.add(report)
 		db_session.commit()
 		g = guide.serialize()
 		return g, 201
@@ -237,6 +267,10 @@ class DataRetentionGuideItemAPI(Resource):
 		parser = reqparse.RequestParser()
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
 		guide = report.data_retention_guide
+
+		report.date_updated = datetime.date.today()
+		guide.date_updated = datetime.date.today()
+
 		guide_categories = db_session.query(DataRetentionGuideCategory).all()
 		guide_category = db_session.query(DataRetentionGuideCategory).get(guide_category_id)
 
@@ -253,6 +287,7 @@ class DataRetentionGuideItemAPI(Resource):
 		# guide.categories = guide_categories
 
 		db_session.add(guide)
+		db_session.add(report)
 		db_session.commit()
 		gi = guide_item.serialize()
 		return gi, 201
@@ -266,6 +301,9 @@ class DataRetentionGuideCategoryAPI(Resource):
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
 		guide = report.data_retention_guide
 
+		report.date_updated = datetime.date.today()
+		guide.date_updated = datetime.date.today()
+
 		json = request.get_json(silent=True)
 		print json
 		data_category = db_session.query(DataCategory).get(json['category_id'])
@@ -277,6 +315,7 @@ class DataRetentionGuideCategoryAPI(Resource):
 
 
 		db_session.add(guide)
+		db_session.add(report)
 		db_session.commit()
 		gc = guide_category.serialize()
 		return gc, 201
@@ -417,11 +456,13 @@ class LawEnforcementActionCategoryListAPI(Resource):
 		parser = reqparse.RequestParser()
 		parser.add_argument('name', type=str, location='json')
 		parser.add_argument('action_selection_type', type=int, location='json')
+		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
 		print args
 		lea_category = LawEnforcementActionCategory(
 			name=args.name,
-			action_selection_type=args.action_selection_type
+			action_selection_type=args.action_selection_type,
+			description=args.description
 		)
 		db_session.add(lea_category)
 		db_session.commit()
@@ -443,12 +484,14 @@ class LawEnforcementActionCategoryAPI(Resource):
 
 		parser.add_argument('name', type=str, location='json', required=True)
 		parser.add_argument('action_selection_type', type=int, location='json')
+		parser.add_argument('description', type=str, location='json')
 
 		args = parser.parse_args()
 		print args
 
 		lea_category.name = args.name
 		lea_category.action_selection_type = args.action_selection_type
+		lea_category.description = args.description
 		
 		db_session.add(lea_category)
 		db_session.commit()
@@ -533,13 +576,16 @@ class LawEnforcementHandbookActionAPI(Resource):
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
 		handbook = report.law_enforcement_handbook
 
+		report.date_updated = datetime.date.today()
+		handbook.date_updated = datetime.date.today()
+
 		handbook_category = db_session.query(LawEnforcementHandbookActionCategory).get(handbook_category_id)
 
 		json = request.get_json(silent=True)
 		print json
 		action = db_session.query(LawEnforcementAction).get(json['action_id'])
 		handbook_action = LawEnforcementHandbookAction()
-		handbook_action.inclusion_status = True
+		handbook_action.inclusion_status = False
 		handbook_action.action = action
 		handbook_action.narrative = action.narrative
 
@@ -547,6 +593,7 @@ class LawEnforcementHandbookActionAPI(Resource):
 		handbook_category.handbook_actions.append(handbook_action)
 
 		db_session.add(handbook)
+		db_session.add(report)
 		db_session.commit()
 		action = handbook_action.serialize()
 		return action, 201
@@ -560,6 +607,9 @@ class LawEnforcementHandbookActionCategoryAPI(Resource):
 		report = db_session.query(TransparencyReport).get(transparency_report_id)
 		handbook = report.law_enforcement_handbook
 
+		report.date_updated = datetime.date.today()
+		handbook.date_updated = datetime.date.today()
+
 		json = request.get_json(silent=True)
 		print json
 		action_category = db_session.query(LawEnforcementActionCategory).get(json['category_id'])
@@ -571,6 +621,7 @@ class LawEnforcementHandbookActionCategoryAPI(Resource):
 
 
 		db_session.add(handbook)
+		db_session.add(report)
 		db_session.commit()
 		hc = handbook_category.serialize()
 		return hc, 201
@@ -595,6 +646,9 @@ class LawEnforcementHandbookAPI(Resource):
 		handbook = LawEnforcementHandbook()
 		handbook.transparency_report = report
 		
+		report.date_updated = datetime.date.today()
+		handbook.date_updated = datetime.date.today()
+
 		#Add associative entities for the guide
 		categories = db_session.query(LawEnforcementActionCategory).order_by("category_id desc").all()
 		for category in categories:
@@ -616,6 +670,7 @@ class LawEnforcementHandbookAPI(Resource):
 			handbook.categories.append(handbook_category)
 
 		db_session.add(handbook)
+		db_session.add(report)
 
 		db_session.commit()
 		h = handbook.serialize()
@@ -640,6 +695,11 @@ class LawEnforcementHandbookAPI(Resource):
 		handbook.complete_status = args.complete_status
 		handbook.narrative = args.narrative
 
+		report.complete_status = report.determineCompleteStatus()
+
+		report.date_updated = datetime.date.today()
+		handbook.date_updated = datetime.date.today()
+
 		handbook_categories = []
 		for category in lea_categories:
 			handbook_category = db_session.query(LawEnforcementHandbookActionCategory).get(category['handbook_category_id'])
@@ -663,6 +723,7 @@ class LawEnforcementHandbookAPI(Resource):
 		handbook.categories = handbook_categories
 		
 		db_session.add(handbook)
+		db_session.add(report)
 		db_session.commit()
 		h = handbook.serialize()
 		return h, 201
@@ -684,6 +745,9 @@ class GovRequestReportAPI(Resource):
 		req_report = GovernmentRequestsReport()
 		req_report.transparency_report = report
 		
+		report.date_updated = datetime.date.today()
+		req_report.date_updated = datetime.date.today()
+
 		#Add associative entities for the request report
 		req_types = db_session.query(GovernmentRequestType).order_by("category_id desc").all()
 		for req_type in req_types:
@@ -701,6 +765,7 @@ class GovRequestReportAPI(Resource):
 			req_report.disclosures.append(req_type_disclosure)
 
 		db_session.add(req_report)
+		db_session.add(report)
 
 		db_session.commit()
 		rr = req_report.serialize()
@@ -729,6 +794,11 @@ class GovRequestReportAPI(Resource):
 		req_report.complete_status = args.complete_status
 		req_report.narrative = args.narrative
 
+		report.complete_status = report.determineCompleteStatus()
+
+		report.date_updated = datetime.date.today()
+		req_report.date_updated = datetime.date.today()
+
 		req_report_disclosures = []
 		for disclosure in disclosures:
 			req_report_disclosure = db_session.query(GovernmentRequestReportTypeDisclosure).get(disclosure['disclosure_id'])
@@ -751,6 +821,7 @@ class GovRequestReportAPI(Resource):
 		req_report.disclosures = req_report_disclosures
 		
 		db_session.add(req_report)
+		db_session.add(report)
 		db_session.commit()
 		rr = req_report.serialize()
 		return rr, 201
@@ -762,6 +833,9 @@ class GovernmentRequestReportTypeAPI(Resource):
 
 		req_report = report.government_requests_report
 		
+		report.date_updated = datetime.date.today()
+		req_report.date_updated = datetime.date.today()
+
 		#Add associative entities for the request report
 		json = request.get_json(silent=True)
 		print json
@@ -782,6 +856,7 @@ class GovernmentRequestReportTypeAPI(Resource):
 		req_report.disclosures.append(req_type_disclosure)
 
 		db_session.add(req_report)
+		db_session.add(report)
 
 		db_session.commit()
 		rr = req_type_disclosure.serialize()

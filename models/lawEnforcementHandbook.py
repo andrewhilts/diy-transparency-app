@@ -23,7 +23,8 @@ class LawEnforcementHandbook(Base):
       'inclusion_status': self.inclusion_status,
       'complete_status': self.complete_status,
       'narrative': self.narrative,
-      'categories': self.serializeCategories()
+      'categories': self.serializeCategories(),
+      'date_updated': self.date_updated.strftime('%Y-%m-%d') if self.date_updated else None
   }
   def serializeCategories(self):
     categories = []

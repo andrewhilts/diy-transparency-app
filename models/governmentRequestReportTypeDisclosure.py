@@ -9,7 +9,7 @@ class GovernmentRequestReportTypeDisclosure(Base):
 	request_type_id=Column(Integer, ForeignKey('government_request_types.type_id'))
 	report=relationship('GovernmentRequestsReport',  back_populates="disclosures", single_parent=True)
 	request_type=relationship('GovernmentRequestType', single_parent=True)
-	disclosure_responses = relationship('TypeDisclosureResponse', order_by="TypeDisclosureResponse.type_disclosure_id", cascade="delete, save-update")
+	disclosure_responses = relationship('TypeDisclosureResponse', order_by="TypeDisclosureResponse.response_id", cascade="delete, save-update")
 
 	def serialize(self):
 		parent = self.request_type.serialize()

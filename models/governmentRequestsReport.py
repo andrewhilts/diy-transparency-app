@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, String, Text, Date, ForeignKey
+from sqlalchemy import Column, Integer, Boolean, String, Text, Date, ForeignKey, desc
 from sqlalchemy.orm import relationship
 from base import Base
 import csv, StringIO
@@ -9,6 +9,7 @@ class GovernmentRequestsReport(Base):
   transparency_report_id=Column(Integer, ForeignKey('transparency_reports.report_id'))
   inclusion_status=Column(Boolean)
   complete_status=Column(Boolean)
+  date_updated=Column(Date)
   narrative=Column(Text)
   transparency_report=relationship('TransparencyReport', back_populates="government_requests_report")
   disclosures=relationship('GovernmentRequestReportTypeDisclosure', back_populates="report", cascade="delete, save-update")
@@ -20,7 +21,8 @@ class GovernmentRequestsReport(Base):
       'inclusion_status': self.inclusion_status,
       'complete_status': self.complete_status,
       'narrative': self.narrative,
-      'categorized_disclosures': self.serializeDisclosures()
+      'categorized_disclosures': self.serializeDisclosures(),
+      'date_updated': self.date_updated.strftime('%Y-%m-%d') if self.date_updated else None
   }
   def serializeDisclosures(self):
 	categories = {}

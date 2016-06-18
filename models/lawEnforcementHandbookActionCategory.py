@@ -17,6 +17,7 @@ class LawEnforcementHandbookActionCategory(Base):
       "handbook_category_id": self.handbook_category_id,
   		"parent_category_id": parent['category_id'],
   		"name": parent['name'],
+      "description": parent['description'],
   		"action_selection_type": parent['action_selection_type'],
   		"inclusion_status": self.inclusion_status,
 		"actions": self.serializeActions()
