@@ -248,7 +248,12 @@ class DataRetentionGuideAPI(Resource):
 			category_items = category['items']
 			for item in category_items:
 				guide_item = db_session.query(DataRetentionGuideItem).get(item['guide_item_id'])
+				print item
 				guide_item.inclusion_status = item['inclusion_status']
+				if "retention_period" in item:
+					guide_item.retention_period = item['retention_period']
+				if "retention_period_unit" in item:
+					guide_item.retention_period_unit = int(item['retention_period_unit'])
 				guide_item.description = item['description']
 				guide_items.append(guide_item)
 				#db_session.add(guide_item)

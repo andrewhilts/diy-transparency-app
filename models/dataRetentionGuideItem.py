@@ -9,6 +9,8 @@ class DataRetentionGuideItem(Base):
   guide_data_item_id=Column(Integer, ForeignKey('data_items.item_id'))
   guide_category_id=Column(Integer, ForeignKey('data_retention_guide_categories.guide_category_id'))
   narrative=Column(Text)
+  retention_period=Column(Integer)
+  retention_period_unit=Column(Integer)
   #denotes being included in the report
   inclusion_status=Column(Boolean) 
   #denotes explicitly whether data is retained or not retained
@@ -22,6 +24,8 @@ class DataRetentionGuideItem(Base):
   		"guide_item_id": self.guide_item_id,
   		"name": parent['name'],
   		"description": parent['description'],
+      "retention_period": self.retention_period,
+      "retention_period_unit": str(self.retention_period_unit),
       "guide_category_id": self.guide_category_id,
   		"narrative": self.narrative,
 		"inclusion_status": self.inclusion_status,
