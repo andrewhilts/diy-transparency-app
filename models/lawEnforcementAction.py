@@ -7,6 +7,7 @@ class LawEnforcementAction(Base):
   action_id=Column(Integer, primary_key=True)
   category_id=Column(Integer, ForeignKey('law_enforcement_action_categories.category_id'))
   name=Column(String(255))
+  inclusion_status_default=Column(Boolean)
   #inherited by report instances of action, can be overwritten
   narrative=Column(Text) 
   narrative_label=Column(String(255))
@@ -17,5 +18,6 @@ class LawEnforcementAction(Base):
   		"action_id": self.action_id,
   		"name": self.name,
   		"narrative": self.narrative,
-  		"narrative_label": self.narrative_label
+  		"narrative_label": self.narrative_label,
+      "inclusion_status_default": self.inclusion_status_default
   	}

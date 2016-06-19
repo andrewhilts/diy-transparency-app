@@ -253,7 +253,10 @@ class DataRetentionGuideAPI(Resource):
 				if "retention_period" in item:
 					guide_item.retention_period = item['retention_period']
 				if "retention_period_unit" in item:
-					guide_item.retention_period_unit = int(item['retention_period_unit'])
+					try:
+						guide_item.retention_period_unit = int(item['retention_period_unit'])
+					except ValueError:
+						guide_item.retention_period_unit = None
 				guide_item.description = item['description']
 				guide_items.append(guide_item)
 				#db_session.add(guide_item)
@@ -399,7 +402,7 @@ class DataItemListAPI(Resource):
 		category = db_session.query(DataCategory).get(data_category_id)
 
 		parser.add_argument('name', type=str, location='json', required=True)
-		parser.add_argument('description', type=str, location='json', required=True)
+		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
 		print args
 
@@ -524,8 +527,9 @@ class LawEnforcementActionListAPI(Resource):
 		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
 
 		parser.add_argument('name', type=str, location='json', required=True)
-		parser.add_argument('narrative', type=str, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json')
 		parser.add_argument('narrative_label', type=str, location='json')
+		parser.add_argument('inclusion_status_default', type=bool, location='json')
 		args = parser.parse_args()
 		print args
 
@@ -534,6 +538,7 @@ class LawEnforcementActionListAPI(Resource):
 			narrative=args.narrative,
 			narrative_label=args.narrative_label,
 		)
+		action.inclusion_status_default = args.inclusion_status_default
 		lea_category.actions.append(action)
 		db_session.add(action)
 		db_session.commit()
@@ -555,8 +560,9 @@ class LawEnforcementActionAPI(Resource):
 	def post(self, lea_category_id, lea_action_id):
 		parser = reqparse.RequestParser()
 		parser.add_argument('name', type=str, location='json', required=True)
-		parser.add_argument('narrative', type=str, location='json', required=True)
+		parser.add_argument('narrative', type=str, location='json')
 		parser.add_argument('narrative_label', type=str, location='json')
+		parser.add_argument('inclusion_status_default', type=bool, location='json')
 		args = parser.parse_args()
 		print args
 
@@ -564,6 +570,7 @@ class LawEnforcementActionAPI(Resource):
 		action.name = args.name
 		action.narrative = args.narrative
 		action.narrative_label = args.narrative_label
+		action.inclusion_status_default = args.inclusion_status_default
 
 		db_session.commit()
 		action = action.serialize()
@@ -668,6 +675,9 @@ class LawEnforcementHandbookAPI(Resource):
 					handbook_action.inclusion_status = True
 				else:
 					handbook_action.inclusion_status = False
+				if action.inclusion_status_default:
+					handbook_action.inclusion_status = True
+
 				handbook_action.action = action
 				handbook_category.handbook_actions.append(handbook_action)
 				handbook.actions.append(handbook_action)

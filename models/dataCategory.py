@@ -7,7 +7,7 @@ class DataCategory(Base):
   category_id=Column(Integer, primary_key=True)
   name=Column(String(length=255))
   description=Column(Text)
-  items=relationship("DataItem", cascade='delete')
+  items=relationship("DataItem", cascade='delete', order_by="DataItem.item_id")
   guide_categories=relationship("DataRetentionGuideCategory", cascade="delete")
 
   def __init__(self, category_id = None, name = None, description = None):
