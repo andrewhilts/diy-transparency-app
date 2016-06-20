@@ -16,7 +16,27 @@
 		<ul>
 		{% for item in category['items'] %}
 			{% if item.inclusion_status %}
-				<li>{{item.name}}</li>
+				<li>
+					{{item.name}}
+					{% if item.retention_period and item.retention_period_unit %}
+					 retained for {{item.retention_period}} 
+					{% if item.retention_period_unit == "1" %} 
+						Years
+					{% elif item.retention_period_unit == "2" %}  
+						Months
+					{% elif item.retention_period_unit == "3" %} 
+						Weeks
+					{% elif item.retention_period_unit == "4" %}  
+						Days
+					{% elif item.retention_period_unit == "5" %}  
+						Hours
+					{% elif item.retention_period_unit == "6" %} 
+						Minutes
+					{% elif item.retention_period_unit == "7" %} 
+						Seconds
+					{% endif %}
+					{% endif %}
+				</li>
 			{% endif %}
 		{% endfor %}
 		</ul>
