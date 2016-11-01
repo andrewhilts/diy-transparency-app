@@ -1,0 +1,12 @@
+<div class="container center">
+<p><a ng-href="{{categoryPath}}">Back to category overview</a></p>
+	<form>
+	<h2 ng-if="isCreating">Create new data item</h2>
+	<h2 ng-if="!isCreating">item {{item.item_id}}</h2>
+
+	<p><label>Name: <input ng-model="item.name"></label></p>
+	<p><label>Description: <textarea ng-model="item.description" class="width-100p height-xxlarge"></textarea></label></p>
+
+	<p><button ng-click="save()" class="button button-default">Save</button></p>
+	</form>
+</div>

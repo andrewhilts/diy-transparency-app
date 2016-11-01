@@ -1,0 +1,38 @@
+<div class="container paddinghorizontal-medium center">
+	<h2 class="f3 texttransform-uppercase textalign-center letterspacing-tracked marginbottom-xlarge">Reports</h2>
+<!-- 	<p>
+		DESCRIPTION / INTRO FOR TRANSPARENCY REPORTS. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+		consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+		cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+		proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p> -->
+	<div class="backgroundcolor-white padding-medium">
+		<table class="f5 width-100p zebra">
+			<tr>
+				<th>Author
+				<th>Report Start Date
+				<th>Report End Date
+				<th>Last updated
+				<th>Status
+				<th colspan="2">Actions
+			
+			<tr ng-repeat="report in reports">
+				<td>{{report.author_name}}
+				<td>{{report.report_period_start}}
+				<td>{{report.report_period_end}}
+				<td>{{report.date_updated}}
+				<td>
+					<span ng-if="report.complete_status"><em>Completed</em></span>
+					<span ng-if="!report.complete_status"><em>In Progress</em></span>
+				
+				<td><a ng-href="#/reports/{{report.report_id}}">View/Edit</a>
+				<td><a class="button button-small button-default" ng-click="deleteReport(report)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+			
+		</table>
+	</div>
+	<p class="textalign-center">
+		<a href="#/create-report" class="button button-default">Create new transparency report</a>
+	</p>
+</div>

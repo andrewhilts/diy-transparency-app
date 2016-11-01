@@ -1,0 +1,12 @@
+<div class="container center">
+	<h2>Data Retention Categories</h2>
+	<table class="width-100p zebra">
+	<tr ng-repeat="category in categories">
+		<td><a ng-href="#/categories/{{category.category_id}}">{{category.name}}</a>
+		<td class="textalign-right"><a class="button button-default button-small" ng-click="deleteCategory(category)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+	
+	</table>
+	<p><a href="#/create-category" class="button button-default">Create a new Data Retention Category</a></p>
+	<div class="height-xxxsmall backgroundcolor-lightsilver marginvertical-large width-100p"></div>
+	<a ng-href="#/admin" class="button button-default">Back to setup</a>
+</div>

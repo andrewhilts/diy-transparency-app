@@ -1,0 +1,78 @@
+<div class="container center" ng-click="closeNarrative($event)">
+	<h2 ng-if="isCreating">Create new Government Request Handbook for report #{{report.report_id}}</h2>
+	<h2 ng-if="!isCreating">Government Request Handbook for report #{{report.report_id}}</h2>
+	<p><em>Last updated: {{handbook.date_updated}}</em></p>
+<p><a class="button button-default" href="#/reports/{{report.report_id}}"><img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to report #{{report.report_id}} overview</a></p>
+	<p>
+		A <strong>government request guideline</strong> explains how an organization receives, processes, and discloses information pertaining to government agencies’ requests for information under the organization’s control. Government request guidelines provide sufficient information that government agencies can clarify what kinds of requests a company is willing to receive, and the preferred ways for government agencies to serve such requests on the organization. These guidelines can also, as part of a narrative, explain the kinds of information that are/are not available. These kinds of explanations can be facilitated by organizations also issuing a data retention guide so that government agencies do not spend time requesting access to information that the organization does not, or no longer, retains.
+	</p>
+	<div>
+	<div class="backgroundcolor-white paddinghorizontal-large paddingtop-medium paddingbottom-small">
+
+		<section ng-if="!isCreating">
+		<p>
+			<button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button>
+		</p>
+			<div class="clear-both clearfix marginvertical-medium borderbottom bordercolor-lightgrey paddingbottom-medium" ng-repeat="category in handbook.categories">
+				<div class="width-50p float-left">
+					<label>
+						<strong><input type="checkbox" ng-model="category.inclusion_status"> {{category.name}}</strong>
+						<div><small>{{category.description}}</small></div>
+					</label>
+				</div>
+				<div class="width-50p float-left">
+					<!-- <button ng-click="selectOption(category.actions, category.actions[0])">asd</button> -->
+					<div class="marginbottom-small" ng-repeat="action in category.actions">
+						<button ng-if="(category.action_selection_type!==3)" ng-disabled="!category.inclusion_status" class="button button-xsmall button-default" ng-click="showActionDetail(action)" ng-attr-title="{{ currentLEAAction.handbook_action_id == action.handbook_action_id ? 'Hide description' : 'Show description' }}"><span ng-show="currentLEAAction.handbook_action_id !== action.handbook_action_id"><img nag-svg="" data-src="images/iconic/info.svg" alt="(i)" class="icon"></span><span ng-show="currentLEAAction.handbook_action_id == action.handbook_action_id"><img class="icon" alt="(x)" nag-svg="" data-src="images/iconic/x.svg"></span></button>
+
+						<label ng-class="{'disabled': !category.inclusion_status}">
+						<input ng-disabled="!category.inclusion_status" type="checkbox" ng-model="action.inclusion_status" ng-if="(category.action_selection_type===2)"> 
+						<input ng-disabled="!category.inclusion_status" type="radio" ng-model="action.inclusion_status" name="category-{{category.handbook_category_id}}" ng-if="(category.action_selection_type===1)" ng-value="true" ng-change="selectOption(category.actions, action)">
+						<input ng-disabled="!category.inclusion_status" type="checkbox" ng-model="action.inclusion_status" ng-if="(category.action_selection_type===3)" style="display:none"> 
+						<textarea ng-disabled="!category.inclusion_status" class="width-100p height-xlarge" ng-model="action.narrative" ng-if="(category.action_selection_type===3)"></textarea>
+						{{action.name}}</label>
+						<div class="dropdown" ng-if="currentLEAAction.handbook_action_id == action.handbook_action_id">
+							<label>
+								Add detail for &ldquo;{{action.name}}&rdquo;
+								<br><textarea ng-disabled="!category.inclusion_status" ng-model="action.narrative" class="width-100p height-xxlarge"></textarea> 
+							</label>
+						</div>
+					</div>
+					<div>
+							<button ng-disabled="!category.inclusion_status" class="button button-default button-small" ng-show="category.handbook_category_id !== addingCategory.handbook_category_id" ng-click="toggleAddingForm(category)"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add another item</button>
+							<button ng-disabled="!category.inclusion_status" class="button button-default button-small" ng-show="category.handbook_category_id == addingCategory.handbook_category_id" ng-click="toggleAddingForm(category)"><img nag-svg="" data-src="images/iconic/x.svg" class="icon"> Cancel</button>
+							<div ng-show="category.handbook_category_id == addingCategory.handbook_category_id">
+								<h4>New Item</h4>
+								<label>Name <input ng-model="addingCategory.newAction.name"></label>
+								<br><label>Description<input ng-model="addingCategory.newAction.narrative"></label>
+								<br><button class="button button-default" ng-click="saveAction(addingCategory)"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add</button>
+							</div>
+						</div>
+				</div>
+			</div>
+			<div class="clear-both clearfix marginvertical-medium borderbottom bordercolor-lightgrey paddingbottom-medium">
+					<a class="button button-default button-small" ng-show="!addingCategory" ng-click="addingCategory = !addingCategory"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add another category</a>
+					<a class="button button-default button-small" ng-show="addingCategory" ng-click="addingCategory = !addingCategory"><img nag-svg="" data-src="images/iconic/x.svg" class="icon"> Cancel</a>
+					<div ng-show="addingCategory">
+						<h4>New Category</h4>
+						<label>Name <input ng-model="newCategory.name"></label>
+						<p><label>Description: <textarea ng-model="newCategory.description" required class="width-100p height-xlarge"></textarea></label></p>
+						<p><label>Guideline selection type: <select ng-model="$parent.selected_action_selection_type" ng-options="type.name for type in action_selection_types" required></select>
+						<br><button class="button button-default" ng-click="saveCategory()"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add</button>
+					</label></p></div>
+				</div>
+		</section>
+		<div>
+			<label class="b">Description of Government Request Handbook</label>
+						<p>Organizations may want to explain to both government agencies and its customers or users alike the rationales driving some of its decisions concerning how government requests are received and processed, and explain what kinds of data are available or unavailable given the organization’s practices. Moreover, additional information concerning what an organization will do when overwhelmed with requests might be appropriate, and the organization might even go so far as to direct government agencies towards online or paper forms that they prefer be included when agencies submit requests.</p>
+
+<p>Furthermore, this non-structured information might include licensing information (is the document copyrighted, protected under a Creative Commons license, etc.) as well as a FAQ that provides answers to common questions that readers of government requests guidelines might regularly ask the organization.</p>
+			<textarea ng-model="handbook.narrative" class="width-100p height-xxlarge" placeholder="Describe this Handbook"></textarea>
+		</div>
+			<p><label><input type="checkbox" ng-model="handbook.complete_status"> Mark handbook as complete.</label></p>
+			<p><button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button></p>
+			<p><a class="button button-default" ng-click="save()" href="{{apiURL}}/transparency-reports/{{report.report_id}}/law-enforcement-handbook/html"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> <span ng-if="unSavedChanges">Save &amp; </span>Download HTML</a></p>
+	</div>
+	
+	<p><a class="button button-default" href="#/reports/{{report.report_id}}"><img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to report #{{report.report_id}} overview</a></p>
+</div></div>

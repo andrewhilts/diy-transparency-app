@@ -1,0 +1,74 @@
+<div class="paddinghorizontal-medium" ng-click="closeDropdown($event)">
+
+	<h2 class="textalign-center" ng-if="isCreating">Create new Government Requests Report for report #{{report.report_id}}</h2>
+	<h2 class="textalign-center" ng-if="!isCreating">Government Requests Report for report #{{report.report_id}}</h2>
+	<p><em>Last updated: {{request_report.date_updated}}</em></p>
+	<p><a class="button button-default" href="#/reports/{{report.report_id}}"><img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to report #{{report.report_id}} overview</a></p>
+	<p>
+		<strong>Government requests reports</strong> document the regularity at which organizations receive, and how they respond to, government agencies’ requests for information. They are often referred to as ‘transparency reports’ by industry groups and members of civil society. These reports demonstrate that an organization is committed to providing data when lawfully required to do so and, in requiring such, operates as a careful steward of its users’ or subscribers’ information. Government requests reports also support a broader social purpose of showcasing to subscribers, to industry colleagues, and to citizens more broadly how often government agencies are using their lawful powers to compel information from organizations.
+	</p>
+	<div class="backgroundcolor-white paddinghorizontal-large paddingtop-medium paddingbottom-small">
+
+		<section ng-if="!isCreating">
+		<p>
+			<button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button>
+		</p>
+			<table class="width-100p dense zebra" style="table-layout: fixed">
+				<tr>
+					<th colspan="2">Category
+					<th ng-repeat="headerItem in header">
+						{{headerItem.name}}
+						<button class="button button-xsmall button-default" ng-click="showHeaderDescription(headerItem)" ng-attr-title="{{ currentHeader.type_disclosure_id == headerItem.type_disclosure_id ? 'Hide description' : 'Show description' }}"><span ng-show="currentHeader.type_disclosure_id !== headerItem.type_disclosure_id"><img nag-svg="" data-src="images/iconic/info.svg" alt="(i)" class="icon"></span><span ng-show="currentHeader.type_disclosure_id == headerItem.type_disclosure_id"><img class="icon" alt="(x)" nag-svg="" data-src="images/iconic/x.svg"></span></button><div ng-if="currentHeader.type_disclosure_id == headerItem.type_disclosure_id" class="dropdown">{{headerItem.description}}</div>
+					
+				
+				<tbody ng-repeat="disclosure_category in request_report.categorized_disclosures" style="border-top:1px solid black">
+					<tr ng-repeat="disclosure in disclosure_category.disclosures">
+					<td ng-if="$first" rowspan="{{disclosure_category.disclosures.length + 1}}">{{disclosure_category.name}}
+					<td>
+						<strong>{{disclosure.name}}</strong>
+						<button class="button button-xsmall button-default" ng-click="showDisclosure(disclosure)" ng-attr-title="{{ currentDisclosure.disclosure_id == disclosure.disclosure_id ? 'Hide description' : 'Show description' }}"><span ng-show="currentDisclosure.disclosure_id !== disclosure.disclosure_id"><img nag-svg="" data-src="images/iconic/info.svg" alt="(i)" class="icon"></span><span ng-show="currentDisclosure.disclosure_id == disclosure.disclosure_id"><img class="icon" alt="(x)" nag-svg="" data-src="images/iconic/x.svg"></span></button><div ng-if="currentDisclosure.disclosure_id == disclosure.disclosure_id" class="dropdown">{{disclosure.description}}</div>
+					<td ng-repeat="response in disclosure.disclosure_responses">
+						<input ng-model="response.count" size="7" pattern="\d+" ng-change="compileTotals()">
+					
+					
+					<tr><td colspan="{{header.length +1}}">
+					<a class="button button-default button-small" ng-show="!disclosure_category.addingDisclosure" ng-click="disclosure_category.addingDisclosure = !disclosure_category.addingDisclosure"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add Type</a>
+					<a class="button button-default button-small" ng-show="disclosure_category.addingDisclosure" ng-click="disclosure_category.addingDisclosure = !disclosure_category.addingDisclosure"><img nag-svg="" data-src="images/iconic/x.svg" class="icon"> Cancel</a>
+					<form ng-show="disclosure_category.addingDisclosure">
+								<h4>New Item</h4>
+								<label>Name <input ng-model="disclosure_category.newRequestType.name"></label>
+								<br><label>Description<textarea ng-model="disclosure_category.newRequestType.description" class="width-100p height-xlarge"></textarea></label>
+								<br><button class="button button-default" ng-click="saveRequestType(disclosure_category)"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add</button>
+							</form>
+					
+				
+				<tbody>
+					<tr style="border-top:1px solid black">
+						<td colspan="2">Totals
+						<td ng-repeat="total in totals track by $index"><strong>{{total}}</strong>
+					
+				
+				</table>
+		</section>
+		
+		<hr>
+
+		<form>
+			<label class="b">Description of Government Requests Report</label>
+			<p>Organizations may want to provide additional data concerning the requests that they receive from government agencies. The narrative, or descriptive, section of their report might explain some of the federal or provincial statutory powers that were used to compel information from organizations, any public court challenges where an organization is trying to narrow a government request, or explanations for why some information was provided voluntarily to government agencies. This section might also discuss whether users are notified of government requests and, if not, why not all persons are notified. It might also include, or link to, an organization’s government requests guideline.</p>
+
+			<p>Furthermore, this non-structured information might include licensing information (is the document copyrighted, protected under a Creative Commons license, etc.) as well as a FAQ that provides answers to common questions that readers of government requests guidelines might regularly ask the organization.</p>
+			<textarea ng-model="request_report.narrative" class="width-100p height-xxlarge" placeholder="Describe this report"></textarea>
+			<p><label><input type="checkbox" ng-model="request_report.complete_status"> Mark requests report as complete.</label></p>
+			<p>
+			<button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button>
+			</p>
+		</form>
+			<p>
+				<a class="button button-default" ng-click="save()" href="{{apiURL}}/transparency-reports/{{report.report_id}}/gov-request-report/csv"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> <span ng-if="unSavedChanges">Save &amp; </span>Download CSV</a>
+				<a class="button button-default" ng-click="save()" href="{{apiURL}}/transparency-reports/{{report.report_id}}/gov-request-report/html"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> <span ng-if="unSavedChanges">Save &amp; </span>Download HTML</a>
+			</p>
+	</div>
+
+	<p><a class="button button-default" href="#/reports/{{report.report_id}}"><img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to report #{{report.report_id}} overview</a></p>
+</div>

@@ -1,0 +1,78 @@
+<html ng-app="TransparencyApp">
+<!--
+
+MOSQUITO wants its sweet, sweet data
+
+                //\
+               || |
+               || |
+               |  |
+          ______\/_  ,
+         '||||||'  (o)
+         `------'--  \
+                /|\   \
+                       \
+                       
+-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title translate="pagetitle"></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <link rel="stylesheet" href="styles/e298b663.main.css">
+  
+  <body class="backgroundcolor-pastelblue sansserif">
+    <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <div class="full-screen" id="loadingScreen"></div>
+    <div class="clearfix">
+        <header class="navbar">
+            <nav>
+                <div class="borderbottom bordercolor-black10">
+                    <ul class="list padding-none textalign-center">
+                        <li class="display-inlineblock marginhorizontal-medium"><a class="black70 texttransform-uppercase letterspacing-tracked b f5" href="#/">Home</a></li>
+                        <li class="display-inlineblock marginhorizontal-medium"><a class="black70 texttransform-uppercase letterspacing-tracked b f5" href="#/reports">Reports</a></li>
+                        <li class="display-inlineblock marginhorizontal-medium"><a class="black70 texttransform-uppercase letterspacing-tracked b f5" href="#/admin">Manage Report Setup</a></li>
+                        <li class="display-inlineblock marginhorizontal-medium"><a class="black70 texttransform-uppercase letterspacing-tracked b f5" href="#/about">About</a></li>
+                        <li class="display-inlineblock marginhorizontal-medium"><a class="black70 texttransform-uppercase letterspacing-tracked b f5" href="#/resources">Resources</a></li>
+                        <li class="display-inlineblock marginhorizontal-medium"><a class="black70 texttransform-uppercase letterspacing-tracked b f5" href="#/help">FAQ</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="center textalign-center">
+                <a class="textdecoration-none black" href="#/">
+                    <h1 class="f-title darkestblue letterspacing-tight textshadow-1 paddinghorizontal-small marginvertical-xlarge marginhorziontal-medium">
+                        DIY Transparency Report
+                    </h1>
+                </a>
+            </div>
+        </header>
+    </div>
+
+    <!-- OTHER PAGES GET INSERTED HERE -->
+    <div ng-view=""></div>
+    
+    <footer class="backgroundcolor-black80 white margintop-xlarge paddinghorizontal-medium paddinghorizontal-none-ns paddingvertical-xlarge clearfix">
+        <div class="container center">
+            <p class="xxxsmall white50 site-policy" translate="wrapper.disclaimer"></p>
+        </div>
+    </footer>
+<!-- <div class="feedback" ng-controller="FeedbackCtrl" ng-include="'views/feedback.html'"></div> -->
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.min.js"></script>
+    <![endif]-->
+
+    <script src="scripts/e5971857.vendor.js"></script>
+
+    <script src="scripts/ddad5e75.scripts.js"></script>
+

@@ -1,0 +1,92 @@
+<div class="container center">
+
+	<h2 class="textalign-center" ng-if="isCreating">Create new Data Retention Guide for report #{{report.report_id}}</h2>
+	<h2 class="textalign-center" ng-if="!isCreating">Data Retention Guide for report #{{report.report_id}}</h2>
+	<p><em>Last updated: {{guide.date_updated}}</em></p>
+<p><a class="button button-default" href="#/reports/{{report.report_id}}"><img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to report #{{report.report_id}} overview</a></p>
+	<p>
+		<strong>Data retention guides</strong> provides information about how long organizations retain information that is in their possession. Such guides can help companies rapidly identify to third-parties, including users and government agencies, whether they possess information of interest to those parties. Moreover, by possessing a data retention guide an organization can demonstrate its compliance with Canadian privacy law.
+	</p>
+	<p class="b">Note that unchecking a certain data type implies that your organization does not retain that data type.</p>
+	<div class="backgroundcolor-white paddinghorizontal-large paddingtop-medium paddingbottom-small">
+		<section ng-if="!isCreating">
+		<p>
+			<button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button>
+		</p>
+				<div class="clear-both clearfix marginvertical-medium borderbottom bordercolor-lightgrey paddingbottom-medium" ng-repeat="category in guide.data_categories">
+					<div class="width-50p paddingright-large float-left">
+						<label>
+							<strong><input type="checkbox" ng-model="category.inclusion_status"> {{category.name}}</strong>
+						</label>
+						<div><small>{{category.description}}</small></div>
+					</div>
+					<div class="width-50p float-left">
+						<div class="marginbottom-small clearfix" ng-repeat="item in category.items" ng-class="{'disabled': !category.inclusion_status}">
+							<label>
+								<input ng-disabled="!category.inclusion_status" type="checkbox" ng-model="item.inclusion_status"> {{item.name}}
+							</label>
+							<fieldset class="clearfix" ng-class="{'disabled': !item.inclusion_status}">
+							<legend>Retention Period</legend>
+							<label class="width-40p float-left">
+								<span class="hidden">Retention Period</span>
+								<input class="width-90p" ng-model="item.retention_period" ng-disabled=" !item.inclusion_status" type="number" size="3">
+							</label>
+							<label class="width-40p float-left">
+								<span class="hidden">
+								Retention Period Unit
+								</span>
+								<select ng-disabled=" !item.inclusion_status" ng-model="item.retention_period_unit">
+									<option value="1">Years
+									<option value="2">Months
+									<option value="3">Weeks
+									<option value="4">Days
+									<option value="5">Hours
+									<option value="6">Minutes
+									<option value="7">Seconds
+								</select>
+							</label>
+							</fieldset>
+						</div>
+						<div>
+							<button class="button button-default button-small" ng-show="addingCategory.guide_category_id !== category.guide_category_id" ng-disabled="!category.inclusion_status" ng-click="toggleAddingForm(category)"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add another item</button>
+							<button class="button button-default button-small" ng-show="addingCategory.guide_category_id == category.guide_category_id" ng-click="toggleAddingForm(category)"><img nag-svg="" data-src="images/iconic/x.svg" class="icon"> Cancel</button>
+							<form ng-show="addingCategory.guide_category_id == category.guide_category_id">
+								<h4>New Item</h4>
+								<label>Name <input ng-model="addingCategory.newItem.name"></label>
+								<br><label>Description<input ng-model="addingCategory.newItem.description"></label>
+								<br><button ng-disabled="!addingCategory.newItem.name || !addingCategory.newItem.description" class="button button-default" ng-click="saveItem(addingCategory)"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add</button>
+							</form>
+						</div>
+
+					</div>
+				</div>
+				<div class="clear-both clearfix marginvertical-medium borderbottom bordercolor-lightgrey paddingbottom-medium">
+					<a class="button button-default button-small" ng-show="!addingNewCategory" ng-click="addingNewCategory = !addingNewCategory"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Add another category</a>
+					<a class="button button-default button-small" ng-show="addingNewCategory" ng-click="addingNewCategory = !addingNewCategory"><img nag-svg="" data-src="images/iconic/x.svg" class="icon"> Cancel</a>
+					<form ng-show="addingNewCategory">
+						<h4>New Category</h4>
+						<label>Name <input ng-model="newCategory.name"></label>
+						<p><label>Description: <textarea ng-model="newCategory.description" required class="width-100p height-xlarge"></textarea></label>
+						<br><button class="button button-default" ng-click="saveCategory()">Add</button>
+						</p>
+					</form>
+				</div>
+		</section>
+		<form>
+			<label class="b">Description of Data Retention Guide</label>
+						<p>An organization might want to provide non-structured information to readers. Such information might include information on why it specifically retains the information it does, the security or other controls that have been established to delimit access to the information, or explanations of why different business systems require the data outlined in the organizational data retention guideline to provide services to individuals.</p>
+
+<p>Furthermore, this non-structured information might include licensing information (is the document copyrighted, protected under a Creative Commons license, etc.) as well as a FAQ that provides answers to common questions that readers of the data retention guideline might regularly ask the organization.</p>
+			<textarea ng-model="guide.narrative" class="width-100p height-xxlarge" placeholder="Describe this guide"></textarea>
+		<p><label><input type="checkbox" ng-model="guide.complete_status"> Mark retention guide as complete.</label></p>
+		<p>
+			<button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button>
+		</p>
+		<p><a class="button button-default" ng-click="save()" href="{{apiURL}}/transparency-reports/{{report.report_id}}/retention_guide/html"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> <span ng-if="unSavedChanges">Save &amp; </span>Download HTML</a></p>
+		</form>
+	</div>
+
+	<p>
+		<a class="button button-default" href="#/reports/{{report.report_id}}"><img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to report #{{report.report_id}} overview</a>
+	</p>
+</div>

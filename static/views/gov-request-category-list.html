@@ -1,0 +1,14 @@
+<div class="container center">
+	<h2>Government Request Categories</h2>
+	<div class="backgroundcolor-white padding-medium">
+		<table class="width-100p zebra">
+		<tr ng-repeat="gov_request_category in gov_request_categories">
+			<td><a ng-href="#/gov-request-categories/{{gov_request_category.category_id}}">{{gov_request_category.name}}</a>
+			<td class="textalign-right"><a class="button button-small button-default" ng-click="deleteCategory(gov_request_category)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+		
+		</table>
+	</div>
+	<p><a class="button button-default" href="#/create-gov-request-category">Create a new Government Request Category</a></p>
+	<div class="height-xxxsmall backgroundcolor-lightsilver marginvertical-large width-100p"></div>
+	<a ng-href="#/admin" class="button button-default">Back to setup</a>
+</div>

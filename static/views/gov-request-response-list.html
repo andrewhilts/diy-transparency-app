@@ -1,0 +1,12 @@
+<div class="container center">
+	<h2>Government Request Reporting Categories</h2>
+	<table class="width-100p">
+	<tr ng-repeat="gov_request_response in gov_request_responses">
+		<td><a ng-href="#/gov-request-responses/{{gov_request_response.response_id}}">{{gov_request_response.name}}</a>
+		<td><a class="link" ng-click="deleteResponse(gov_request_response)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+	
+	</table>
+	<p><a href="#/create-gov-request-response" class="button button-default">Create a new Government Request Reporting Category</a></p>
+	<div class="height-xxxsmall backgroundcolor-lightsilver marginvertical-large width-100p"></div>
+	<a ng-href="#/admin" class="button button-default">Back to setup</a>
+</div>

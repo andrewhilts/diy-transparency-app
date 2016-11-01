@@ -1,0 +1,24 @@
+<div class="container center">
+<p><a href="#/categories">Back to categories overview</a></p>
+	<form>
+	<h2 ng-if="isCreating">Create new data retention category</h2>
+	<h2 ng-if="!isCreating">Category {{category.category_id}}</h2>
+
+	<p><label>Name: <input ng-model="category.name" required></label></p>
+	<p><label>Description: <textarea ng-model="category.description" required class="width-100p height-xxlarge"></textarea></label></p>
+
+	<p><button ng-click="save()" class="button button-default">Save</button></p>
+	</form>
+	<section ng-if="!isCreating">
+		<h2>Data Items</h2>
+		<table class="width-100p zebra">
+			<tr ng-repeat="item in items">
+				<td><a ng-href="#/categories/{{category.category_id}}/items/{{item.item_id}}">{{item.name}}</a>
+				<td class="textalign-right"><a class="button button-default button-small" ng-click="deleteItem(item)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+			
+		</table>
+		<a ng-href="{{category.itemPath}}" class="button button-default">Add data item to category</a>
+	</section>
+	<div class="height-xxxsmall backgroundcolor-lightsilver marginvertical-large width-100p"></div>
+	<a ng-href="#/categories" class="button button-default">Back to data retention guide categories</a>
+</div>

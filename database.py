@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker
-
+import os
+import sqlite3
 import psycopg2
 from settings.database import config as dbconfig
 
@@ -25,7 +26,7 @@ from models.transparencyReport import TransparencyReport
 from models.typeDisclosureResponse import TypeDisclosureResponse
 
 def db_connect():
-	return create_engine(URL(**dbconfig))
+	return create_engine(dbconfig['db_protocol'] + dbconfig['db_url'])
 
 def db_session_maker(engine):
 	return sessionmaker(bind=engine)
@@ -33,3 +34,18 @@ def db_session_maker(engine):
 def db_create_tables():
 	engine=db_connect()
 	Base.metadata.create_all(engine)
+
+# def db_delete():
+# 	if os.path.isfile(dbconfig['db_url']):
+# 		os.remove(dbconfig['db_url'])
+
+# def db_restore():
+# 	restore_query = open('transdb-backup.sql', 'r').read()
+# 	db_delete()
+# 	db_create_tables()
+# 	conn = sqlite3.connect(dbconfig['db_url'])
+# 	c = conn.cursor()
+# 	c.executescript(restore_query)
+# 	conn.commit()
+# 	c.close()
+# 	conn.close()

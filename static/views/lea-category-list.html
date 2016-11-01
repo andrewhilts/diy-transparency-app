@@ -1,0 +1,12 @@
+<div class="container center">
+	<h2>Government Request Handbook Guideline Categories</h2>
+	<table class="width-100p zebra">
+	<tr ng-repeat="lea_category in lea_categories">
+		<td><a ng-href="#/lea-categories/{{lea_category.category_id}}">{{lea_category.name}}</a>
+		<td class="textalign-right"><a class="button button-small button-default" ng-click="deleteCategory(lea_category)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+	
+	</table>
+	<p><a href="#/create-lea-category" class="button button-default">Create a new Government Request Handbook Guideline Category</a></p>
+	<div class="height-xxxsmall backgroundcolor-lightsilver marginvertical-large width-100p"></div>
+	<a ng-href="#/admin" class="button button-default">Back to setup</a>
+</div>

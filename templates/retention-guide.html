@@ -17,24 +17,39 @@
 		{% for item in category['items'] %}
 			{% if item.inclusion_status %}
 				<li>
-					{{item.name}}
-					{% if item.retention_period and item.retention_period_unit %}
-					 retained for {{item.retention_period}} 
-					{% if item.retention_period_unit == "1" %} 
+					<strong>{{item.name}}</strong>{% if item.retention_period and item.retention_period_unit %}: Retained for {{item.retention_period}} 
+					{% if item.retention_period_unit == "1" and item.retention_period > 1 %} 
 						Years
-					{% elif item.retention_period_unit == "2" %}  
+					{% elif item.retention_period_unit == "2" and item.retention_period > 1 %}  
 						Months
-					{% elif item.retention_period_unit == "3" %} 
+					{% elif item.retention_period_unit == "3" and item.retention_period > 1 %} 
 						Weeks
-					{% elif item.retention_period_unit == "4" %}  
+					{% elif item.retention_period_unit == "4" and item.retention_period > 1 %}  
 						Days
-					{% elif item.retention_period_unit == "5" %}  
+					{% elif item.retention_period_unit == "5" and item.retention_period > 1 %}  
 						Hours
-					{% elif item.retention_period_unit == "6" %} 
+					{% elif item.retention_period_unit == "6" and item.retention_period > 1 %} 
 						Minutes
-					{% elif item.retention_period_unit == "7" %} 
+					{% elif item.retention_period_unit == "7" and item.retention_period == 1 %} 
 						Seconds
+					{% elif item.retention_period_unit == "1" and item.retention_period == 1 %} 
+						Year
+					{% elif item.retention_period_unit == "2" and item.retention_period == 1 %}  
+						Month
+					{% elif item.retention_period_unit == "3" and item.retention_period == 1 %} 
+						Week
+					{% elif item.retention_period_unit == "4" and item.retention_period == 1 %}  
+						Day
+					{% elif item.retention_period_unit == "5" and item.retention_period == 1 %}  
+						Hour
+					{% elif item.retention_period_unit == "6" and item.retention_period == 1 %} 
+						Minute
+					{% elif item.retention_period_unit == "7" and item.retention_period == 1 %} 
+						Second
 					{% endif %}
+					{% endif %}
+					{% if item.description %}
+						<br><small>{{item.description}}</small>
 					{% endif %}
 				</li>
 			{% endif %}

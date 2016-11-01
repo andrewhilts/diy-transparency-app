@@ -1,0 +1,83 @@
+<div class="container paddinghorizontal-medium center">
+	<div class="paddingvertical-medium paddinghorizontal-large backgroundcolor-white clear-both clearfix">
+		
+		<h2 class="margintop-small textalign-center f1" ng-if="isCreating">Create new transparency report</h2>
+		<h2 class="margintop-small textalign-center f1" ng-if="!isCreating">Report {{report.report_id}}</h2>
+		<p><em>Last updated: {{report.date_updated}}</em></p>
+		<p>
+		The DIY Transparency Reporting tool is designed to help small- and mid-sized business showcase their responsible stewardship of subscribers’ and users’ information. Using the tool an organization can generate three types of reports that, in aggregate, constitute a holistic transparency report. 
+		</p>
+		<div class="width-40p float-left">
+			<form>
+
+			<p><label>Author Name: <br><input ng-model="report.author_name" required></label></p>
+
+			<!-- <h3>Reporting Period</h3> -->
+			<fieldset class="width-80p">
+			<legend>Time period covered</legend>
+			<p class="small">Indicate the start and end dates of the period covered by this transparency report.</p>
+			<p><label>Start Date:  <datepicker date-format="yyyy-MM-dd"><input type="text" ng-model="report.report_period_start" required></datepicker></label></p>
+						<p><label>End Date:  <datepicker date-format="yyyy-MM-dd"><input type="text" ng-model="report.report_period_end" required></datepicker></label></p></fieldset>
+
+			<!-- <h3>Publication</h3> -->
+			<p><label>Publication Date: <datepicker date-format="yyyy-MM-dd"><input type="text" ng-model="report.publication_date"></datepicker></label></p>
+			<p class="margintop-large">
+				<button ng-disabled="!unSavedChanges" class="button button-default" ng-click="save()" ng-class="{'plssave': unSavedChanges}"><span ng-if="unSavedChanges"><img nag-svg="" data-src="images/iconic/loop-circular.svg" class="icon"> Save changes</span><span ng-if="!unSavedChanges"><img nag-svg="" data-src="images/iconic/check.svg" class="icon"> Up-to-date</span></button>
+			</p>
+			
+			</form>
+		</div>
+		<div class="width-60p float-left">
+			<section ng-if="!isCreating">
+			
+			<h3>Components</h3>
+			<p>
+			<a class="button button-default button-small" ng-if="!report.retention_guide_id" ng-href="{{report.guidePath}}"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Create Data Retention Guide</a>
+			<span ng-if="report.retention_guide_id"><a ng-href="{{report.guidePath}}">Edit Data Retention Guide</a>
+			<span ng-if="!report.retention_guide_complete_status">(In Progress)</span>
+			<span ng-if="report.retention_guide_complete_status">(Completed)</span>
+			</span>
+			<br><small>A data retention guide provides information about how long organizations retain information that is in their possession.</small>
+			<br><span ng-if="report.retention_guide_id"><label class="small b"><input ng-model="report.retention_guide_inclusion_status" type="checkbox"> Include in report</label></span>
+			<span ng-if="report.retention_guide_inclusion_status && report.retention_guide_complete_status"><a class="button button-default button-small" href="{{apiURL}}/transparency-reports/{{report.report_id}}/retention_guide/html"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> Download HTML</a></span>
+			</p>
+			<p>
+			<a class="button button-default button-small" ng-if="!report.law_enforcement_handbook_id" ng-href="{{report.handbookPath}}"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Create Government Request Guidelines</a>
+			<span ng-if="report.law_enforcement_handbook_id"><a ng-href="{{report.handbookPath}}">Edit Government Request Guidelines</a>
+			<span ng-if="!report.law_enforcement_handbook_complete_status">(In Progress)</span>
+			<span ng-if="report.law_enforcement_handbook_complete_status">(Completed)</span>
+			</span>
+			<br><small>A government request guideline explains how an organization receives, processes, and discloses information pertaining to government agencies’ requests for information under the organization’s control.</small>
+			<br>
+			<span ng-if="report.law_enforcement_handbook_id">
+			<label class="small b"><input ng-model="report.law_enforcement_handbook_inclusion_status" type="checkbox"> Include in report</label>
+			</span>
+			<span ng-if="report.law_enforcement_handbook_complete_status && report.law_enforcement_handbook_inclusion_status">
+				<a class="button button-default button-small" href="{{apiURL}}/transparency-reports/{{report.report_id}}/law-enforcement-handbook/html"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> Download HTML</a>
+			</span>
+			</p>
+			<p>
+			<a class="button button-default button-small" ng-if="!report.government_requests_report_id" ng-href="{{report.govRequestsReportPath}}"><img nag-svg="" data-src="images/iconic/plus.svg" class="icon"> Create Government Requests Report</a>
+			<span ng-if="report.government_requests_report_id"><a ng-href="{{report.govRequestsReportPath}}">Edit Government Requests Report</a>
+			<span ng-if="!report.government_requests_report_complete_status">(In Progress)</span>
+			<span ng-if="report.government_requests_report_complete_status">(Completed)</span>
+			</span>
+			<br><small>A government requests report documents the regularity at which an organization receives, and how it respond to, government agencies’ requests for information.</small>
+			<br>
+			<span ng-if="report.government_requests_report_id"><label class="small b"><input ng-model="report.government_requests_report_inclusion_status" type="checkbox"> Include in report</label>
+			</span>
+			<span ng-if="report.government_requests_report_inclusion_status && report.government_requests_report_complete_status">
+				<a class="button button-default button-small" href="{{apiURL}}/transparency-reports/{{report.report_id}}/gov-request-report/csv"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> Download CSV</a>
+				<a class="button button-default button-small" href="{{apiURL}}/transparency-reports/{{report.report_id}}/gov-request-report/html"><img nag-svg="" data-src="images/iconic/data-transfer-download.svg" class="icon"> Download HTML</a>
+			</span>
+			</p>
+			</section>
+		</div>
+
+	</div>
+	<p>
+		<a class="button button-default" href="#/reports">
+			<img nag-svg="" data-src="images/iconic/arrow-thick-left.svg" class="icon"> Back to reports overview
+		</a>
+	</p>
+</div>

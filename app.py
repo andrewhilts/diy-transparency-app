@@ -1,6 +1,8 @@
-from flask import Flask, jsonify, request, make_response, render_template
+from flask import Flask, jsonify, request, make_response, render_template, send_from_directory
 from flask_restful import Api, Resource, reqparse
 import json
+import webbrowser
+import threading
 import datetime
 import database
 from models.base import Base as Base
@@ -21,16 +23,31 @@ from models.lawEnforcementHandbookAction import LawEnforcementHandbookAction
 from models.lawEnforcementHandbook import LawEnforcementHandbook
 from models.transparencyReport import TransparencyReport
 from models.typeDisclosureResponse import TypeDisclosureResponse
+import os, sys
+import logging
+logging.basicConfig(filename='app.log', filemode='w', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+def handle_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
+
+    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+
+sys.excepthook = handle_exception
 
 db_connection = database.db_connect()
 db_session = database.db_session_maker(db_connection)()
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 api = Api(app)
 
-@app.route("/")
-def hello():
-    return "Hello World!"
+@app.route('/app/<path:path>')
+def send_js(path):
+    return send_from_directory('static', path)
 
 @app.route("/transparency-reports/<int:transparency_report_id>/gov-request-report/csv")
 def govRequestReportCSV(transparency_report_id):
@@ -95,7 +112,7 @@ class TransparencyReportListAPI(Resource):
 		reports_as_dicts = []
 		for r in reports:
 			reports_as_dicts.append(r.serialize())
-		print reports_as_dicts
+		
 		return reports_as_dicts, 200
 
     def put(self):
@@ -105,12 +122,12 @@ class TransparencyReportListAPI(Resource):
 		parser.add_argument('report_period_end', type=str, location='json')
 		parser.add_argument('publication_date', type=str, location='json')
 		args = parser.parse_args()
-		print args
+		
 		report = TransparencyReport(
 			author_name=args.author_name,
-			report_period_start=args.report_period_start,
-			report_period_end=args.report_period_end,
-			publication_date=args.publication_date
+			report_period_start=datetime.datetime.strptime(args.report_period_start, '%Y-%m-%d'),
+			report_period_end=datetime.datetime.strptime(args.report_period_end, '%Y-%m-%d'),
+			publication_date=datetime.datetime.strptime(args.publication_date, '%Y-%m-%d')
 		)
 		report.date_updated = datetime.date.today()
 		db_session.add(report)
@@ -139,16 +156,15 @@ class TransparencyReportAPI(Resource):
 		
 		report = db_session.query(TransparencyReport).get(id)
 		report.author_name = args.author_name
-		report.report_period_start = args.report_period_start
-		report.report_period_end = args.report_period_end
-		report.publication_date = args.publication_date
+		report.report_period_start = datetime.datetime.strptime(args.report_period_start, '%Y-%m-%d')
+		report.report_period_end = datetime.datetime.strptime(args.report_period_end, '%Y-%m-%d')
+		report.publication_date = datetime.datetime.strptime(args.publication_date, '%Y-%m-%d')
 
 		if report.government_requests_report is not None:
 			if 'government_requests_report_inclusion_status' in json:
 				report.government_requests_report.inclusion_status = json['government_requests_report_inclusion_status']
 
 		if report.data_retention_guide is not None:
-			print "hi"
 			if 'retention_guide_inclusion_status' in json:
 				report.data_retention_guide.inclusion_status = json['retention_guide_inclusion_status']
 
@@ -166,7 +182,7 @@ class TransparencyReportAPI(Resource):
     def delete(self, id):
 		report = db_session.query(TransparencyReport).get(id)
 		db_session.delete(report)
-		print db_session.commit()
+		db_session.commit()
 		return "", 204
 
 class DataRetentionGuideAPI(Resource):
@@ -248,7 +264,7 @@ class DataRetentionGuideAPI(Resource):
 			category_items = category['items']
 			for item in category_items:
 				guide_item = db_session.query(DataRetentionGuideItem).get(item['guide_item_id'])
-				print item
+				
 				guide_item.inclusion_status = item['inclusion_status']
 				if "retention_period" in item:
 					guide_item.retention_period = item['retention_period']
@@ -283,7 +299,7 @@ class DataRetentionGuideItemAPI(Resource):
 		guide_category = db_session.query(DataRetentionGuideCategory).get(guide_category_id)
 
 		json = request.get_json(silent=True)
-		print json
+		
 		data_item = db_session.query(DataItem).get(json['item_id'])
 		guide_item = DataRetentionGuideItem()
 		guide_item.inclusion_status = True
@@ -313,7 +329,7 @@ class DataRetentionGuideCategoryAPI(Resource):
 		guide.date_updated = datetime.date.today()
 
 		json = request.get_json(silent=True)
-		print json
+		
 		data_category = db_session.query(DataCategory).get(json['category_id'])
 		guide_category = DataRetentionGuideCategory()
 		guide_category.inclusion_status = True
@@ -337,7 +353,7 @@ class DataCategoryListAPI(Resource):
 		categories_as_dicts = []
 		for c in categories:
 			categories_as_dicts.append(c.serialize())
-		print categories_as_dicts
+		
 		return categories_as_dicts, 200
 
 	def put(self):
@@ -345,7 +361,7 @@ class DataCategoryListAPI(Resource):
 		parser.add_argument('name', type=str, location='json')
 		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
-		print args
+		
 		category = DataCategory(
 			name=args.name,
 			description=args.description
@@ -371,7 +387,7 @@ class DataCategoryAPI(Resource):
 		parser.add_argument('name', type=str, location='json', required=True)
 		parser.add_argument('description', type=str, location='json', required=True)
 		args = parser.parse_args()
-		print args
+		
 
 		category.name = args.name
 		category.description = args.description
@@ -384,7 +400,7 @@ class DataCategoryAPI(Resource):
 	def delete(self, data_category_id):
 		category = db_session.query(DataCategory).get(data_category_id)
 		db_session.delete(category)
-		print db_session.commit()
+		db_session.commit()
 		return "", 204
 
 class DataItemListAPI(Resource):
@@ -404,7 +420,7 @@ class DataItemListAPI(Resource):
 		parser.add_argument('name', type=str, location='json', required=True)
 		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
-		print args
+		
 
 		item = DataItem(
 			name=args.name,
@@ -435,7 +451,7 @@ class DataItemAPI(Resource):
 
 		args = parser.parse_args()
 		
-		print args
+		
 
 		item = db_session.query(DataItem).get(data_item_id)
 		item.name = args.name
@@ -448,7 +464,7 @@ class DataItemAPI(Resource):
 	def delete(self, data_category_id, data_item_id):
 	    item = db_session.query(DataItem).get(data_item_id)
 	    db_session.delete(item)
-	    print db_session.commit()
+	    db_session.commit()
 	    return "", 204
 
 class LawEnforcementActionCategoryListAPI(Resource):
@@ -457,7 +473,7 @@ class LawEnforcementActionCategoryListAPI(Resource):
 		lea_categories_as_dicts = []
 		for c in lea_categories:
 			lea_categories_as_dicts.append(c.serialize())
-		print lea_categories_as_dicts
+		
 		return lea_categories_as_dicts, 200
 
 	def put(self):
@@ -466,7 +482,7 @@ class LawEnforcementActionCategoryListAPI(Resource):
 		parser.add_argument('action_selection_type', type=int, location='json')
 		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
-		print args
+		
 		lea_category = LawEnforcementActionCategory(
 			name=args.name,
 			action_selection_type=args.action_selection_type,
@@ -495,7 +511,7 @@ class LawEnforcementActionCategoryAPI(Resource):
 		parser.add_argument('description', type=str, location='json')
 
 		args = parser.parse_args()
-		print args
+		
 
 		lea_category.name = args.name
 		lea_category.action_selection_type = args.action_selection_type
@@ -509,7 +525,7 @@ class LawEnforcementActionCategoryAPI(Resource):
 	def delete(self, lea_category_id):
 		lea_category = db_session.query(LawEnforcementActionCategory).get(lea_category_id)
 		db_session.delete(lea_category)
-		print db_session.commit()
+		db_session.commit()
 		return "", 204
 
 class LawEnforcementActionListAPI(Resource):
@@ -531,7 +547,7 @@ class LawEnforcementActionListAPI(Resource):
 		parser.add_argument('narrative_label', type=str, location='json')
 		parser.add_argument('inclusion_status_default', type=bool, location='json')
 		args = parser.parse_args()
-		print args
+		
 
 		action = LawEnforcementAction(
 			name=args.name,
@@ -564,7 +580,7 @@ class LawEnforcementActionAPI(Resource):
 		parser.add_argument('narrative_label', type=str, location='json')
 		parser.add_argument('inclusion_status_default', type=bool, location='json')
 		args = parser.parse_args()
-		print args
+		
 
 		action = db_session.query(LawEnforcementAction).get(lea_action_id)
 		action.name = args.name
@@ -579,7 +595,7 @@ class LawEnforcementActionAPI(Resource):
 	def delete(self, lea_category_id, lea_action_id):
 	    action = db_session.query(LawEnforcementAction).get(lea_action_id)
 	    db_session.delete(action)
-	    print db_session.commit()
+	    db_session.commit()
 	    return "", 204
 
 class LawEnforcementHandbookActionAPI(Resource):
@@ -594,7 +610,7 @@ class LawEnforcementHandbookActionAPI(Resource):
 		handbook_category = db_session.query(LawEnforcementHandbookActionCategory).get(handbook_category_id)
 
 		json = request.get_json(silent=True)
-		print json
+		
 		action = db_session.query(LawEnforcementAction).get(json['action_id'])
 		handbook_action = LawEnforcementHandbookAction()
 		handbook_action.inclusion_status = False
@@ -623,7 +639,7 @@ class LawEnforcementHandbookActionCategoryAPI(Resource):
 		handbook.date_updated = datetime.date.today()
 
 		json = request.get_json(silent=True)
-		print json
+		
 		action_category = db_session.query(LawEnforcementActionCategory).get(json['category_id'])
 		handbook_category = LawEnforcementHandbookActionCategory()
 		handbook_category.inclusion_status = True
@@ -832,7 +848,7 @@ class GovRequestReportAPI(Resource):
 				#db_session.add(handbook_item)
 			req_report_disclosure.disclosures = req_report_disclosure_responses
 			req_report_disclosures.append(req_report_disclosure)
-		print req_report_disclosures
+		
 		req_report.disclosures = req_report_disclosures
 		
 		db_session.add(req_report)
@@ -853,7 +869,7 @@ class GovernmentRequestReportTypeAPI(Resource):
 
 		#Add associative entities for the request report
 		json = request.get_json(silent=True)
-		print json
+		
 		# data_category = db_session.query(DataRetentionGuideCategory).get(gov_request_category_id)
 
 		req_type = db_session.query(GovernmentRequestType).get(json['type_id'])
@@ -886,7 +902,7 @@ class GovernmentRequestCategoryListAPI(Resource):
 		gov_request_categories_as_dicts = []
 		for c in gov_request_categories:
 			gov_request_categories_as_dicts.append(c.serialize())
-		print gov_request_categories_as_dicts
+		
 		return gov_request_categories_as_dicts, 200
 
 	def put(self):
@@ -894,7 +910,7 @@ class GovernmentRequestCategoryListAPI(Resource):
 		parser.add_argument('name', type=str, location='json')
 		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
-		print args
+		
 		gov_request_category = GovernmentRequestCategory(
 			name=args.name,
 			description=args.description
@@ -921,7 +937,7 @@ class GovernmentRequestCategoryAPI(Resource):
 		parser.add_argument('description', type=str, location='json')
 
 		args = parser.parse_args()
-		print args
+		
 
 		gov_request_category.name = args.name
 		gov_request_category.description = args.description
@@ -934,7 +950,7 @@ class GovernmentRequestCategoryAPI(Resource):
 	def delete(self, gov_request_category_id):
 		gov_request_category = db_session.query(GovernmentRequestCategory).get(gov_request_category_id)
 		db_session.delete(gov_request_category)
-		print db_session.commit()
+		db_session.commit()
 		return "", 204
 
 class GovernmentRequestTypeListAPI(Resource):
@@ -954,7 +970,7 @@ class GovernmentRequestTypeListAPI(Resource):
 		parser.add_argument('name', type=str, location='json', required=True)
 		parser.add_argument('description', type=str, location='json', required=True)
 		args = parser.parse_args()
-		print args
+		
 
 		type = GovernmentRequestType(
 			name=args.name,
@@ -983,7 +999,7 @@ class GovernmentRequestTypeAPI(Resource):
 		parser.add_argument('name', type=str, location='json', required=True)
 		parser.add_argument('description', type=str, location='json', required=True)
 		args = parser.parse_args()
-		print args
+		
 
 		type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
 		type.name = args.name
@@ -996,7 +1012,7 @@ class GovernmentRequestTypeAPI(Resource):
 	def delete(self, gov_request_category_id, gov_request_type_id):
 	    type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
 	    db_session.delete(type)
-	    print db_session.commit()
+	    db_session.commit()
 	    return "", 204
 
 class GovernmentRequestResponseListAPI(Resource):
@@ -1005,7 +1021,7 @@ class GovernmentRequestResponseListAPI(Resource):
 		gov_request_responses_as_dicts = []
 		for c in gov_request_responses:
 			gov_request_responses_as_dicts.append(c.serialize())
-		print gov_request_responses_as_dicts
+		
 		return gov_request_responses_as_dicts, 200
 
 	def put(self):
@@ -1013,7 +1029,7 @@ class GovernmentRequestResponseListAPI(Resource):
 		parser.add_argument('name', type=str, location='json')
 		parser.add_argument('description', type=str, location='json')
 		args = parser.parse_args()
-		print args
+		
 		gov_request_response = GovernmentRequestResponse(
 			name=args.name,
 			description=args.description
@@ -1040,7 +1056,7 @@ class GovernmentRequestResponseAPI(Resource):
 		parser.add_argument('description', type=str, location='json')
 
 		args = parser.parse_args()
-		print args
+		
 
 		gov_request_response.name = args.name
 		gov_request_response.description = args.description
@@ -1053,7 +1069,7 @@ class GovernmentRequestResponseAPI(Resource):
 	def delete(self, gov_request_response_id):
 		gov_request_response = db_session.query(GovernmentRequestResponse).get(gov_request_response_id)
 		db_session.delete(gov_request_response)
-		print db_session.commit()
+		db_session.commit()
 		return "", 204
 
 api.add_resource(TransparencyReportListAPI, '/transparency-reports', endpoint = 'transparency-reports')
@@ -1088,4 +1104,5 @@ api.add_resource(GovernmentRequestResponseListAPI, '/gov-request-responses')
 api.add_resource(GovernmentRequestResponseAPI, '/gov-request-responses/<int:gov_request_response_id>')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    threading.Timer(1.25, lambda: webbrowser.open('http://localhost:5000/app/index.html') ).start()
+    app.run(debug=False)

@@ -1,0 +1,14 @@
+<div class="container center">
+<p><a ng-href="{{lea_categoryPath}}">Back to Government Request Handbook Guideline Category overview</a></p>
+	<form>
+	<h2 ng-if="isCreating">Create new Government Request Handbook Guideline</h2>
+	<h2 ng-if="!isCreating">Guideline {{lea_action.action_id}}</h2>
+
+	<p><label>Name: <input ng-model="lea_action.name" required></label></p>
+	<p><label>Select by default? <input type="checkbox" ng-model="lea_action.inclusion_status_default"></label></p>
+	<p><label>Narrative: <textarea ng-model="lea_action.narrative"></textarea></label></p>
+	<p><label>Narrative Label: <textarea ng-model="lea_action.narrative_label" class="width-100p"></textarea></label></p>
+
+	<p><button ng-click="save()" class="button button-default">Save</button></p>
+	</form>
+</div>

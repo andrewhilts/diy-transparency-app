@@ -1,0 +1,13 @@
+<div class="container center">
+<p><a href="#/gov-request-categories">Back to Government Request Reporting Category overview</a></p>
+	<form>
+	<h2 ng-if="isCreating">Create new Government Reporting Category</h2>
+	<h2 ng-if="!isCreating">Government Reporting Category {{gov_request_response.response_id}}</h2>
+
+	<p><label>Name: <input ng-model="gov_request_response.name" required></label></p>
+	<p><label>Description: <textarea ng-model="gov_request_response.description" required class="width-100p height-xxlarge"></textarea></label></p>
+	
+
+	<p><button ng-click="save()" class="button button-default">Save</button></p>
+	</form>
+</div>

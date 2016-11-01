@@ -1,0 +1,23 @@
+<div class="container center">
+<p><a href="#/gov-request-categories">Back to Government Request Categories overview</a></p>
+	<form>
+	<h2 ng-if="isCreating">Create new Government Request Category</h2>
+	<h2 ng-if="!isCreating">Government Request Category {{gov_request_category.category_id}}</h2>
+
+	<p><label>Name: <input ng-model="gov_request_category.name" required></label></p>
+	<p><label>Description: <textarea ng-model="gov_request_category.description" required class="width-100p height-xxlarge"></textarea></label></p>
+	
+
+	<p><button ng-click="save()" class="button button-default">Save</button></p>
+	</form>
+	<section ng-if="!isCreating">
+		<h2>Government Request Types</h2>
+		<table class="width-100p zebra">
+			<tr ng-repeat="gov_request_type in gov_request_types">
+				<td><a ng-href="#/gov-request-categories/{{gov_request_category.category_id}}/gov-request-types/{{gov_request_type.type_id}}">{{gov_request_type.name}}</a>
+				<td class="textalign-right"><a class="button button-default button-small" ng-click="deleteType(gov_request_type)"><img nag-svg="" data-src="images/iconic/trash.svg" class="icon" alt="Delete"></a>
+			
+		</table>
+		<a ng-href="{{gov_request_category.typePath}}" class="button button-default">Add government request type to category</a>
+	</section>
+</div>
