@@ -20,7 +20,7 @@ Finally, double click `windows-diy-transparency-run.bat` to run the app. Make su
 ### Mac
 Double click on `DIY Transparency.app` to launch the app. Before launching the app, it will install the required software libraries if they don't exist. Make sure you keep the terminal window open while you use the app.
 
-**NOTE: You'll need to give `DIY Transparency.app` permission to run on your computer. If you don't want to do that you can always just run the `mac_os.sh` bash script directly.**
+**NOTE: You'll need to give `DIY Transparency.app` permission to run on your computer. If you don't want to do that you can follow the Linux instructions.**
 
 ### Linux
 Make sure you have Python 2 and pip installed.
