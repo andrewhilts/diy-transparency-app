@@ -6,7 +6,7 @@ DIY Transparency is a Python application that runs a webserver that serves a web
 See Appendix II of [A Guide to Transparency Reporting for Canadian Businesses Using the DIY Transparency Report Tool for usage instructions](https://www.telecomtransparency.org/wp-content/uploads/2016/06/Transparency-Reporting-Tool-Documentation-1.0.pdf).
 
 ## Installing and opening the app
-We provide some useful scripts for Windows and Mac users to make it easier to install and launch the applicaiton.
+We provide some useful scripts for Windows and Mac users to make it easier to install and launch the application.
 
 ### Windows
 Make sure you have Python 2 installed on your machine. https://www.python.org/downloads
