@@ -1,5 +1,5 @@
 #DIY Transparency
-DIY Transparency is an application that makes it simpler to define and create transparency reports for your organization!
+DIY Transparency is an application that makes it simpler to define and create transparency reports for your organization.
 
 DIY Transparency is a Python application that runs a webserver that serves a web interface. Point your web browser to http://localhost:5000 to use the app.
 
@@ -11,11 +11,11 @@ We provide some useful scripts for Windows and Mac users to make it easier to in
 ### Windows
 Make sure you have Python 2 installed on your machine. https://www.python.org/downloads
 
-Next, double click on windows-install-pip.bat to install pip (or install it following the official guide: https://pip.pypa.io/en/stable/installing/)
+Next, double click on `windows-install-pip.bat` to install pip (or install it following the official guide: https://pip.pypa.io/en/stable/installing/)
 
-Next, double click windows-install-requirements.bat to install the required software libraries.
+Next, double click `windows-install-requirements.bat` to install the required software libraries.
 
-Finally, double click windows-diy-transparency-run.bat to run the app. Make sure you keep the command prompt window open while you use the app.
+Finally, double click `windows-diy-transparency-run.bat` to run the app. Make sure you keep the command prompt window open while you use the app.
 
 ### Mac
 Double click on `DIY Transparency.app` to launch the app. Before launching the app, it will install the required software libraries if they don't exist. Make sure you keep the terminal window open while you use the app.
