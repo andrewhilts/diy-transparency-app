@@ -1,1 +1,7 @@
 INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 15:16:29] "GET /transparency-reports HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 15:16:30] "GET /transparency-reports/1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 15:16:30] "GET /app/views/report.html HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 15:16:31] "GET /app/images/iconic/arrow-thick-left.svg HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 15:16:31] "GET /app/images/iconic/check.svg HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 15:16:31] "GET /app/images/iconic/data-transfer-download.svg HTTP/1.1" 200 -
