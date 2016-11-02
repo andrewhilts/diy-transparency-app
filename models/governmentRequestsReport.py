@@ -1,7 +1,11 @@
 from sqlalchemy import Column, Integer, Boolean, String, Text, Date, ForeignKey, desc
 from sqlalchemy.orm import relationship
-from base import Base
-import csv, StringIO
+from .base import Base
+import csv
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 class GovernmentRequestsReport(Base):
 	__tablename__ = 'government_requests_reports'

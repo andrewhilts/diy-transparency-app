@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, String, Text, Date, ForeignKey
 from sqlalchemy.orm import relationship
-from base import Base
+from .base import Base
 
 class TransparencyReport(Base):
 	__tablename__ = 'transparency_reports'

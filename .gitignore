@@ -3,6 +3,7 @@ bin/*
 lib/*
 local/*
 venv/*
+venv3/*
 *.pyc
 settings/*
 DIY\ Transparency.app
