@@ -31,9 +31,9 @@ Make sure you have Python 2.7.x, pip, and virtualenv (apt-get install virtualenv
 
 In the terminal, in the project folder, run
 
-	./install.sh
+	bash install.sh
 
 Once installation is, to launch the app server you can run:
 
-	./diy-transparency-run.sh
+	bash diy-transparency-run.sh
 
