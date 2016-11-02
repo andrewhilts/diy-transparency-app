@@ -9,16 +9,16 @@ See Appendix II of [A Guide to Transparency Reporting for Canadian Businesses Us
 We provide some useful scripts for Windows and Mac users to make it easier to install and launch the application.
 
 ### Windows
-Make sure you have Python 2.7.x installed on your machine. https://www.python.org/downloads
+Make sure you have Python 2.7.x installed on your machine (The below scripts assume Python is installed to C:\Python27). https://www.python.org/downloads
 
-Next, double click on `windows-install-pip.bat` to install pip (or install it following the official guide: https://pip.pypa.io/en/stable/installing/)
+Next, if you don't have pip installed, install it following the official guide: https://pip.pypa.io/en/stable/installing/
 
 Next, double click `windows-install.bat` to install the required software libraries.
 
 Finally, double click `windows-diy-transparency-run.bat` to run the app. Make sure you keep the command prompt window open while you use the app.
 
 ### Mac
-Make sure you have pip (run python get-pip.py in this folder) and virtualenv installed (pip install virtualenv).
+Make sure you have pip (https://pip.pypa.io/en/stable/installing/) and virtualenv installed (pip install virtualenv).
 
 Double click on `Install.app` to install the app. This will install the required software libraries if they don't exist. 
 
