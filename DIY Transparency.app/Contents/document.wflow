@@ -51,7 +51,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>set pp to POSIX path of (path to me)set ppp to ((characters 1 thru -22 of pp) as string) --trim last 3 --trim last 21tell application "Terminal"	activate	do script "cd " &amp; ppp &amp; "; ./mac_os.sh"end tell</string>
+					<string>tell application "Finder"	set pp to POSIX path of (parent of (path to me) as string)end telltell application "Terminal"	activate	do script "cd " &amp; pp &amp; "; ./mac_os.sh"end tell</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
