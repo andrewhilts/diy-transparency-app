@@ -13,7 +13,7 @@ Make sure you have Python 2.7.x installed on your machine. https://www.python.or
 
 Next, double click on `windows-install-pip.bat` to install pip (or install it following the official guide: https://pip.pypa.io/en/stable/installing/)
 
-Next, double click `windows-install-requirements.bat` to install the required software libraries.
+Next, double click `windows-install.bat` to install the required software libraries.
 
 Finally, double click `windows-diy-transparency-run.bat` to run the app. Make sure you keep the command prompt window open while you use the app.
 
