@@ -3,7 +3,6 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import sessionmaker
 import os
 import sqlite3
-import psycopg2
 from settings.database import config as dbconfig
 
 from models.base import Base as Base

@@ -31,11 +31,11 @@ handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
 def handle_exception(exc_type, exc_value, exc_traceback):
-    if issubclass(exc_type, KeyboardInterrupt):
-        sys.__excepthook__(exc_type, exc_value, exc_traceback)
-        return
+	if issubclass(exc_type, KeyboardInterrupt):
+		sys.__excepthook__(exc_type, exc_value, exc_traceback)
+		return
 
-    logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
+	logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
 
 sys.excepthook = handle_exception
 
@@ -47,7 +47,7 @@ api = Api(app)
 
 @app.route('/app/<path:path>')
 def send_js(path):
-    return send_from_directory('static', path)
+	return send_from_directory('static', path)
 
 @app.route("/transparency-reports/<int:transparency_report_id>/gov-request-report/csv")
 def govRequestReportCSV(transparency_report_id):
@@ -107,7 +107,7 @@ def GovRequestReportHTML(transparency_report_id):
 	return output, 200
 
 class TransparencyReportListAPI(Resource):
-    def get(self):
+	def get(self):
 		reports = db_session.query(TransparencyReport).order_by("report_id desc").all()
 		reports_as_dicts = []
 		for r in reports:
@@ -115,7 +115,7 @@ class TransparencyReportListAPI(Resource):
 		
 		return reports_as_dicts, 200
 
-    def put(self):
+	def put(self):
 		parser = reqparse.RequestParser()
 		parser.add_argument('author_name', type=str, location='json')
 		parser.add_argument('report_period_start', type=str, location='json')
@@ -135,16 +135,16 @@ class TransparencyReportListAPI(Resource):
 		r = report.serialize()
 		return r, 201
 
-    def options(self):
+	def options(self):
 		return {}, 200
 
 class TransparencyReportAPI(Resource):
-    def get(self, id):
+	def get(self, id):
 		report = db_session.query(TransparencyReport).get(id)
 		r = report.serialize()
 		return r, 200
 
-    def post(self, id):
+	def post(self, id):
 		parser = reqparse.RequestParser()
 		parser.add_argument('author_name', type=str, location='json')
 		parser.add_argument('report_period_start', type=str, location='json')
@@ -179,7 +179,7 @@ class TransparencyReportAPI(Resource):
 		r = report.serialize()
 		return r, 201
 
-    def delete(self, id):
+	def delete(self, id):
 		report = db_session.query(TransparencyReport).get(id)
 		db_session.delete(report)
 		db_session.commit()
@@ -462,10 +462,10 @@ class DataItemAPI(Resource):
 		return item, 201
 
 	def delete(self, data_category_id, data_item_id):
-	    item = db_session.query(DataItem).get(data_item_id)
-	    db_session.delete(item)
-	    db_session.commit()
-	    return "", 204
+		item = db_session.query(DataItem).get(data_item_id)
+		db_session.delete(item)
+		db_session.commit()
+		return "", 204
 
 class LawEnforcementActionCategoryListAPI(Resource):
 	def get(self):
@@ -593,10 +593,10 @@ class LawEnforcementActionAPI(Resource):
 		return action, 201
 
 	def delete(self, lea_category_id, lea_action_id):
-	    action = db_session.query(LawEnforcementAction).get(lea_action_id)
-	    db_session.delete(action)
-	    db_session.commit()
-	    return "", 204
+		action = db_session.query(LawEnforcementAction).get(lea_action_id)
+		db_session.delete(action)
+		db_session.commit()
+		return "", 204
 
 class LawEnforcementHandbookActionAPI(Resource):
 	def put(self, transparency_report_id, handbook_category_id):
@@ -747,7 +747,7 @@ class LawEnforcementHandbookAPI(Resource):
 					handbook_action.narrative = action['narrative']
 					handbook_actions.append(handbook_action)
 				except TypeError:
-					print "hmmm"
+					continue
 				#db_session.add(handbook_item)
 			handbook_category.handbook_actions = handbook_actions
 			handbook_categories.append(handbook_category)
@@ -844,7 +844,7 @@ class GovRequestReportAPI(Resource):
 					req_report_disclosure_response.count = response['count']
 					req_report_disclosure_responses.append(req_report_disclosure_response)
 				except TypeError:
-					print "hmmm"
+					continue
 				#db_session.add(handbook_item)
 			req_report_disclosure.disclosures = req_report_disclosure_responses
 			req_report_disclosures.append(req_report_disclosure)
@@ -1010,10 +1010,10 @@ class GovernmentRequestTypeAPI(Resource):
 		return type, 201
 
 	def delete(self, gov_request_category_id, gov_request_type_id):
-	    type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
-	    db_session.delete(type)
-	    db_session.commit()
-	    return "", 204
+		type = db_session.query(GovernmentRequestType).get(gov_request_type_id)
+		db_session.delete(type)
+		db_session.commit()
+		return "", 204
 
 class GovernmentRequestResponseListAPI(Resource):
 	def get(self):
@@ -1104,5 +1104,5 @@ api.add_resource(GovernmentRequestResponseListAPI, '/gov-request-responses')
 api.add_resource(GovernmentRequestResponseAPI, '/gov-request-responses/<int:gov_request_response_id>')
 
 if __name__ == "__main__":
-    threading.Timer(1.25, lambda: webbrowser.open('http://localhost:5000/app/index.html') ).start()
-    app.run(debug=False)
+	threading.Timer(1.25, lambda: webbrowser.open('http://localhost:5000/app/index.html') ).start()
+	app.run(debug=False)
