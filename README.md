@@ -9,7 +9,7 @@ See Appendix II of [A Guide to Transparency Reporting for Canadian Businesses Us
 We provide some useful scripts for Windows and Mac users to make it easier to install and launch the application.
 
 ### Windows
-Make sure you have Python 2 (>= 2.7) installed on your machine. https://www.python.org/downloads
+Make sure you have Python 2.7.x installed on your machine. https://www.python.org/downloads
 
 Next, double click on `windows-install-pip.bat` to install pip (or install it following the official guide: https://pip.pypa.io/en/stable/installing/)
 
@@ -18,28 +18,22 @@ Next, double click `windows-install-requirements.bat` to install the required so
 Finally, double click `windows-diy-transparency-run.bat` to run the app. Make sure you keep the command prompt window open while you use the app.
 
 ### Mac
+Make sure you have pip (run python get-pip.py in this folder) and virtualenv installed (pip install virtualenv).
+
 Double click on `Install.app` to install the app. This will install the required software libraries if they don't exist. 
 
 Next, to run the app, double click on `DIY Transparency.app` to run the application server and open your web browser. Make sure you keep the terminal window open while you use the app.
 
-**NOTE: You'll need to give `Install.app` and `.DIY Transparency.app` permission to run on your computer. If you don't want to do that, follow the alternative instructions below.**
-
-In the terminal, in the project folder, run
-
-	./mac-install.sh
-
-Once installation is, to launch the app server you can run:
-
-	./mac-diy-transparency-run.sh
+**NOTE: You'll need to give `Install.app` and `.DIY Transparency.app` permission to run on your computer. If you don't want to do that, follow the Linux instructions below.**
 
 ### Linux
-Make sure you have Python 2 (>= 2.7) and pip installed.
+Make sure you have Python 2.7.x, pip, and virtualenv (apt-get install virtualenv) installed.
 
 In the terminal, in the project folder, run
 
-	./linux-install.sh
+	./install.sh
 
 Once installation is, to launch the app server you can run:
 
-	./linux-diy-transparency-run.sh
+	./diy-transparency-run.sh
 
