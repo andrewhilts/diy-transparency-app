@@ -1,7 +1,7 @@
 #DIY Transparency Report
-DIY Transparency is an application that makes it simpler to define and create transparency reports for your organization.
+DIY Transparency Report is an application that makes it simpler to define and create transparency reports for your organization.
 
-DIY Transparency is a Python application that runs a webserver that serves a web interface. Point your web browser to http://localhost:5000 to use the app.
+DIY Transparency Report is a Python application that runs a webserver that serves a web interface. Point your web browser to http://localhost:5000 to use the app.
 
 See Appendix II of [A Guide to Transparency Reporting for Canadian Businesses Using the DIY Transparency Report Tool for usage instructions](https://www.telecomtransparency.org/wp-content/uploads/2016/06/Transparency-Reporting-Tool-Documentation-1.0.pdf).
 
