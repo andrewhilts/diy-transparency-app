@@ -1,1 +1,11 @@
 INFO:werkzeug: * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/index.html HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/styles/e298b663.main.css HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/scripts/ddad5e75.scripts.js HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/scripts/e5971857.vendor.js HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/translations/locale-en.json HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/views/messages.html HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/views/main.html HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/images/ttp-cmyk.png HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/images/citizen-lab-logo.png HTTP/1.1" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Nov/2016 10:17:03] "GET /app/images/open-effect-logo.png HTTP/1.1" 304 -
