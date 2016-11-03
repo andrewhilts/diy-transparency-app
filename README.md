@@ -41,7 +41,6 @@ Next, to run the app:
 1.  Select "Other"
 1.  Go into the "Utilities" folder, 
 1.  Change the dropdown at the bottom of the window from "Recommended applications" to "All applications", and choose "Terminal".
-1.  **Press "Always open with" so you can just double click on the file next time.**
 1.  Press the "Open" button.
 
 Make sure you keep the Terminal window open while you use the app.
