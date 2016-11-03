@@ -43,6 +43,8 @@ Next, to run the app:
 1.  Change the dropdown at the bottom of the window from "Recommended applications" to "All applications", and choose "Terminal".
 1.  Press the "Open" button.
 
+You can also just drag `diy-transparency-run.sh` into your Terminal window and hit Enter.
+
 Make sure you keep the Terminal window open while you use the app.
 
 You can also just follow the Linux instructions if you're comfortable with the command line.
