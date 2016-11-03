@@ -1,4 +1,7 @@
 #DIY Transparency Report
+
+![DIY Transparency Report Logo][logo]
+
 DIY Transparency Report is an application that makes it simpler to define and create transparency reports for your organization.
 
 DIY Transparency Report is a Python application that runs a webserver that serves a web interface. Point your web browser to http://localhost:5000 to use the app.
@@ -20,11 +23,11 @@ Finally, double click `windows-diy-transparency-run.bat` to run the app. Make su
 ### Mac
 Open up the project folder in finder.
 
-Right click on `install.sh`, hover over to "Open With", select "other", choose "Terminal". 
+Right click on `install.sh`, hover over to "Open With", select "other", choose "Terminal". You can also simply drag the file from Finder into Terminal and press enter.
 
-Once that's done, exit Terminal.
+Next, to run the app, right click on `diy-transparency-run.sh`, hover over to "Open With", select "other", choose "Terminal". You can also simply drag the file from Finder into Terminal and press enter.
 
-Next, to run the app, right click on `diy-transparency-run.sh`, hover over to "Open With", select "other", choose "Terminal". Make sure you keep the Terminal window open while you use the app.
+Make sure you keep the Terminal window open while you use the app.
 
 ### Linux
 Make sure you have Python 2.7.x, pip, and virtualenv (apt-get install virtualenv) installed.
@@ -37,3 +40,4 @@ Once installation is, to launch the app server you can run:
 
 	bash diy-transparency-run.sh
 
+[logo]: https://raw.githubusercontent.com/andrewhilts/diy-transparency-app/master/static/diy-transparency-logo.png
