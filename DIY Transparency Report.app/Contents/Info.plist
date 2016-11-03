@@ -30,7 +30,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Application Stub</string>
 	<key>CFBundleIconFile</key>
-	<string>AutomatorApplet</string>
+	<string>diy-transparency-icon</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.automator.DIY Transparency Report</string>
 	<key>CFBundleInfoDictionaryVersion</key>
