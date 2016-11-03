@@ -1,6 +1,6 @@
-#DIY Transparency Report
-
 ![DIY Transparency Report Logo][logo]
+
+#DIY Transparency Report
 
 DIY Transparency Report is an application that makes it simpler to define and create transparency reports for your organization.
 
