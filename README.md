@@ -18,11 +18,13 @@ Next, double click `windows-install.bat` to install the required software librar
 Finally, double click `windows-diy-transparency-run.bat` to run the app. Make sure you keep the command prompt window open while you use the app.
 
 ### Mac
-Double click on `Install.app` to install the app. This will install the required software libraries if they don't exist. 
+Open up the project folder in finder.
 
-Next, to run the app, double click on `DIY Transparency.app` to run the application server and open your web browser. Make sure you keep the terminal window open while you use the app.
+Right click on `install.sh`, hover over to "Open With", select "other", choose "Terminal". 
 
-**NOTE: You'll need to give `Install.app` and `.DIY Transparency.app` permission to run on your computer. If you don't want to do that, follow the Linux instructions below.**
+Once that's done, exit Terminal.
+
+Next, to run the app, right click on `diy-transparency-run.sh`, hover over to "Open With", select "other", choose "Terminal". Make sure you keep the Terminal window open while you use the app.
 
 ### Linux
 Make sure you have Python 2.7.x, pip, and virtualenv (apt-get install virtualenv) installed.
