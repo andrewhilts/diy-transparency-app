@@ -68,15 +68,15 @@
 				<key>Class Name</key>
 				<string>RunScriptAction</string>
 				<key>InputUUID</key>
-				<string>E194BA38-39F9-4982-A8B2-B1186119D20F</string>
+				<string>9D714293-E0FD-40C1-9E68-8FC05C56813A</string>
 				<key>Keywords</key>
 				<array>
 					<string>Run</string>
 				</array>
 				<key>OutputUUID</key>
-				<string>CC876704-53C4-430B-8D26-8E121448E56C</string>
+				<string>FE0BE39E-C321-4BB9-86A7-0B79354B1EC0</string>
 				<key>UUID</key>
-				<string>E6045CFF-8562-43C4-939F-9A6FD7D6AED5</string>
+				<string>944D83F9-AD64-41E2-9C4C-24C19D98BC58</string>
 				<key>UnlocalizedApplications</key>
 				<array>
 					<string>Automator</string>
@@ -102,6 +102,8 @@ end run</string>
 						<string>0</string>
 					</dict>
 				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
