@@ -7,3 +7,4 @@ venv3/*
 *.pyc
 settings/*
 DIY\ Transparency.app
+diy-transparency-run.sh
