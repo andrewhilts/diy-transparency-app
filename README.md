@@ -9,12 +9,14 @@ DIY Transparency Report is a Python application that runs a webserver that serve
 See Appendix II of [A Guide to Transparency Reporting for Canadian Businesses Using the DIY Transparency Report Tool for usage instructions](https://www.telecomtransparency.org/wp-content/uploads/2016/06/Transparency-Reporting-Tool-Documentation-1.0.pdf).
 
 ## Installing and opening the app
-We provide some useful scripts for Windows and Mac users to make it easier to install and launch the application.
+We provide some useful scripts to make it easier to install and launch the application.
+
+Step one: press "Clone or download", follow the instructions, then once you have a copy of the project on your computer, open up the project folder.
 
 ### Windows
 Make sure you have Python 2.7.x installed on your machine (The below scripts assume Python is installed to C:\Python27). https://www.python.org/downloads
 
-Next, if you don't have pip installed, install it following the official guide: https://pip.pypa.io/en/stable/installing/
+Next, if you don't have pip installed, install it following the official guide: https://pip.pypa.io/en/stable/installing/ (It should install along with Python)
 
 Next, double click `windows-install.bat` to install the required software libraries.
 
@@ -30,14 +32,14 @@ Next, to run the app, right click on `diy-transparency-run.sh`, hover over to "O
 Make sure you keep the Terminal window open while you use the app.
 
 ### Linux
-Make sure you have Python 2.7.x, pip, and virtualenv (apt-get install virtualenv) installed.
+Make sure you have Python 2.7.x, pip, and virtualenv (apt-get install --user virtualenv) installed.
 
 In the terminal, in the project folder, run
 
-	bash install.sh
+	./install.sh
 
 Once installation is, to launch the app server you can run:
 
-	bash diy-transparency-run.sh
+	./diy-transparency-run.sh
 
 [logo]: https://raw.githubusercontent.com/andrewhilts/diy-transparency-app/master/static/diy-transparency-logo.png
