@@ -8,5 +8,5 @@ if ! type "virtualenv" > /dev/null; then
 fi
 virtualenv -p /usr/bin/python2.7 venv
 source venv/bin/activate
-pip install -r requirements.txt
+python venv/bin/pip install -r requirements.txt
 exit
