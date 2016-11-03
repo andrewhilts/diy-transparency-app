@@ -27,23 +27,13 @@ Open up the project folder in Finder.
 
 To install the app:
 
-1.  Right click on `install.sh`
-1.  Hover over to "Open With"
-1.  Select "Other"
-1.  Go into the "Utilities" folder, 
-1.  Change the dropdown at the bottom of the window from "Recommended applications" to "All applications", and choose "Terminal".
-1.  Press the "Open" button.
+1.  Open up the "Terminal" application
+1.  Drag `install.sh` into your Terminal window and hit Enter.
 
 Next, to run the app:
 
-1.  Right click on `diy-transparency-run.sh`
-1.  Hover over to "Open With"
-1.  Select "Other"
-1.  Go into the "Utilities" folder, 
-1.  Change the dropdown at the bottom of the window from "Recommended applications" to "All applications", and choose "Terminal".
-1.  Press the "Open" button.
-
-**You can also just drag `diy-transparency-run.sh` into your Terminal window and hit Enter.**
+1.  Open up the "Terminal" application
+1.  Drag `diy-transparency-run.sh` into your Terminal window and hit Enter.
 
 Make sure you keep the Terminal window open while you use the app.
 

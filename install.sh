@@ -11,6 +11,5 @@ fi
 virtualenv -p /usr/bin/python2.7 venv
 source venv/bin/activate
 python venv/bin/pip install -r requirements.txt
-cat .diy-transparency-run.sh > diy-transparency-run.sh
 printf "\n\n\n\n\nInstallation complete! Run diy-transparency-run.sh to launch the app.\n\n\n\n\n"
 exit
