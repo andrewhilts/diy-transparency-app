@@ -1,4 +1,6 @@
 #!/bin/bash
+SCRIPTPATH=$( cd $(dirname $0) ; pwd -P )
+cd $SCRIPTPATH
 if ! type "virtualenv" > /dev/null; then
 	pip install --user virtualenv
 	if [ "$(uname)" == "Darwin" ]; then
