@@ -46,8 +46,10 @@ In the terminal, in the project folder, run
 
 	./install.sh
 
-Once installation is, to launch the app server you can run:
+Once installation is complete, to launch the app server you can run:
 
 	./diy-transparency-run.sh
+
+Make sure you keep the Terminal window open while you use the app.
 
 [logo]: https://raw.githubusercontent.com/andrewhilts/diy-transparency-app/master/static/diy-transparency-logo.png
