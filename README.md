@@ -27,12 +27,12 @@ Open up Terminal. type `cd` followed by a space. Drag the project folder into Te
 
 To install the app:
 
-1.  type `./install.sh` into your Terminal window and hit Enter.
+1.  type `./install.sh` into your Terminal window and hit return.
 
 Next, to run the app:
 
 1.  Open up the "Terminal" application. Make sure you are in the project directory.
-1.  type `./diy-transparency-run.sh` into your Terminal window and hit Enter.
+1.  type `./diy-transparency-run.sh` into your Terminal window and hit return.
 
 Make sure you keep the Terminal window open while you use the app.
 
