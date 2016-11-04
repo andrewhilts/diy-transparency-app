@@ -23,17 +23,16 @@ Next, double click `windows-install.bat` to install the required software librar
 Finally, double click `windows-diy-transparency-run.bat` to run the app. Make sure you keep the command prompt window open while you use the app.
 
 ### Mac
-Open up the project folder in Finder.
+Open up Terminal. type `cd` followed by a space. Drag the project folder into Terminal. Hit return.
 
 To install the app:
 
-1.  Open up the "Terminal" application
-1.  Drag `install.sh` into your Terminal window and hit Enter.
+1.  type `./install.sh` into your Terminal window and hit Enter.
 
 Next, to run the app:
 
-1.  Open up the "Terminal" application
-1.  Drag `diy-transparency-run.sh` into your Terminal window and hit Enter.
+1.  Open up the "Terminal" application. Make sure you are in the project directory.
+1.  type `./diy-transparency-run.sh` into your Terminal window and hit Enter.
 
 Make sure you keep the Terminal window open while you use the app.
 
