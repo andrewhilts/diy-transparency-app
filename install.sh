@@ -1,7 +1,4 @@
 #!/bin/bash
-SCRIPTPATH=${BASH_SOURCE[${#BASH_SOURCE[@]} - 1]}
-DIRECTORY=$(dirname "${SCRIPTPATH}")
-cd "${DIRECTORY}"
 if ! type "virtualenv" > /dev/null; then
 	pip install --user virtualenv
 	if [ "$(uname)" == "Darwin" ]; then
